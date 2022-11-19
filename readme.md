@@ -41,7 +41,6 @@ surge . mddocx2.surge.sh
 - Bold and Italic text (Only available for * symbol)
 - Blockquotes
 - Unordered lists
-- Checkboxes lists
 - Code blocks
 
 All that is available following markdown best practices 
