@@ -106,7 +106,6 @@ public class DgDocx
             streamWriter.Write(s);
         }
 
-
         //commented code is for .zip files
 
         //using (var archive = new ZipArchive(outfile, ZipArchiveMode.Create, true))

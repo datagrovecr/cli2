@@ -784,7 +784,7 @@ namespace HtmlToOpenXml
                         p.Append(element);
                     }
                 }
-				//elements.Clear();
+				elements.Clear();
             }
             else
             {
