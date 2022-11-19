@@ -30,9 +30,34 @@ surge . mddocx2.surge.sh
 
 ```
 
+# About
+
+"Package name" allows you to translate Markdown file to .docx files and vice versa. It's able to read and translate to .docx following Markdown features:
+
+- Headings
+- Paragraphs
+- Bold text (Only available for * symbol)
+- Italic text (Only available for * symbol)
+- Bold and Italic text (Only available for * symbol)
+- Blockquotes
+- Unordered lists
+- Checkboxes lists
+- Code blocks
+
+All that is available following markdown best practices 
+
 # Getting Started
 
 This section only wants to cover the basics to translate from markdown files to .docx format.
+
+To use this package just clone it in your project repository following this example in CMD:
+
+```
+  C:\Users\YourPc> `cd your\project\path`
+  C:\Users\YourPc\your\project\path> `git clone https://github.com/datagrovecr/cli2.git`
+```
+Or do it in your favorite way following this repository link https://github.com/datagrovecr/cli2 
+Just don't forget to have it in the same project in order to reference it.
 
 ## Read Markdown Files
 
@@ -61,3 +86,15 @@ With the `using` operator (recommended to close the stream automatically) we can
                         var outstream = new MemoryStream();
                         await DgDocx.docx_to_md(instream, outstream, root)
 ```
+
+# Bugs
+
+# Future Development
+
+- Code blocks (Missing .docx to md)
+- Images 
+- Links (Every type of links)
+- Escape characters (https://www.markdownguide.org/basic-syntax/#escaping-characters)
+- Check box lists (Missing .docx to md)
+- Code (https://www.markdownguide.org/basic-syntax/#code)
+- Ordered lists
