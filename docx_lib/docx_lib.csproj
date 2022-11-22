@@ -1,21 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.30.4" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.18.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="DocumentFormat.OpenXml" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Html2OpenXml\HtmlToOpenXml.csproj" />
   </ItemGroup>
+
 </Project>

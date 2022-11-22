@@ -18,39 +18,40 @@ internal class Program
             string fn = Path.GetFileNameWithoutExtension(mdFile);
             string root = outdir + fn.Replace("_md", "");
             var docxFile = root + ".docx";
-                try
+            try
+            {
+                // markdown to docx
+                var md = File.ReadAllText(mdFile);
+                var inputStream = new MemoryStream();
+                await DgDocx.md_to_docx(md, inputStream);
+
+                //inputStream is writing into the .docx file
+                File.WriteAllBytes(docxFile, inputStream.ToArray());
+
+
+                // convert the docx back to markdown.
+                using (var instream = File.Open(docxFile, FileMode.Open))
                 {
-                   // markdown to docx
-                    var md =  File.ReadAllText(mdFile);
-                    var inputStream = new MemoryStream();
-                    await DgDocx.md_to_docx(md, inputStream);
+                    var outstream = new MemoryStream();
+                    await DgDocx.docx_to_md(instream, outstream, root);//Previous: instream, outstream, fn.Replace("_md", "")
 
-                    //inputStream is writing into the .docx file
-                    File.WriteAllBytes(docxFile, inputStream.ToArray());                       
+                    //The commented code is for .zip files
 
-
-                    // convert the docx back to markdown.
-                    using (var instream = File.Open(docxFile, FileMode.Open)){
-                        var outstream = new MemoryStream();
-                        await DgDocx.docx_to_md(instream, outstream, root);//Previous: instream, outstream, fn.Replace("_md", "")
-
-                        //The commented code is for .zip files
-
-                        //using (var fileStream = new FileStream(root+".md", FileMode.Create))
-                        //{
-                        //    outstream.Seek(0, SeekOrigin.Begin);
-                        //    outstream.CopyTo(fileStream);
-                        //}                        
-                    }
-                    using (ZipArchive archive = ZipFile.OpenRead(outdir + "test.docx"))
-                    {
-                        archive.ExtractToDirectory(outdir + "test.unzipped", true);
-                    }
+                    //using (var fileStream = new FileStream(root+".md", FileMode.Create))
+                    //{
+                    //    outstream.Seek(0, SeekOrigin.Begin);
+                    //    outstream.CopyTo(fileStream);
+                    //}                        
                 }
-                catch (Exception e)
+                using (ZipArchive archive = ZipFile.OpenRead(outdir + "test.docx"))
                 {
-                    Console.WriteLine($"{mdFile} failed {e}");
+                    archive.ExtractToDirectory(outdir + "test.unzipped", true);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{mdFile} failed {e}");
+            }
         }
     }
 

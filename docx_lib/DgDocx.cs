@@ -49,21 +49,21 @@ public class DgDocx
 
             // Create the document structure and add some text.
             mainPart.Document = new Document();
-/*            Body body = mainPart.Document.AppendChild(new Body());
+            /*            Body body = mainPart.Document.AppendChild(new Body());
 
-            if (debug) {
-                {
-                    Paragraph para = body.AppendChild(new Paragraph());
-                    Run run = para.AppendChild(new Run());
-                    run.AppendChild(new Text("Markdown: " + md));
-                }
+                        if (debug) {
+                            {
+                                Paragraph para = body.AppendChild(new Paragraph());
+                                Run run = para.AppendChild(new Run());
+                                run.AppendChild(new Text("Markdown: " + md));
+                            }
 
-                {
-                    Paragraph para2 = body.AppendChild(new Paragraph());
-                    Run run2 = para2.AppendChild(new Run());
-                    run2.AppendChild(new Text("Html: " + html));
-                }
-            }*/
+                            {
+                                Paragraph para2 = body.AppendChild(new Paragraph());
+                                Run run2 = para2.AppendChild(new Run());
+                                run2.AppendChild(new Text("Html: " + html));
+                            }
+                        }*/
 
             HtmlConverter converter = new HtmlConverter(mainPart);
             converter.ParseHtml(html);
@@ -130,8 +130,8 @@ public class DgDocx
         foreach (var row in node.Descendants<TableRow>())
         {
             rowNumber++;
-            
-            if(rowNumber == 2)
+
+            if (rowNumber == 2)
             {
                 headerDivider(headerDivision, textBuilder);
             }
@@ -141,7 +141,7 @@ public class DgDocx
             {
                 foreach (var para in cell.Descendants<Paragraph>())
                 {
-                    if(para.ParagraphProperties != null)
+                    if (para.ParagraphProperties != null)
                     {
                         headerDivision.Add(para.ParagraphProperties.Justification.Val);
                     }
@@ -167,9 +167,9 @@ public class DgDocx
         if (style.Contains("Heading"))
         {
             num = int.Parse(style.Substring(style.Length - 1));
-            
 
-            for(int i = 0; i<num; i++)
+
+            for (int i = 0; i < num; i++)
             {
                 prefix += "#";
             }
@@ -222,9 +222,9 @@ public class DgDocx
         String[] textSliced = text.Split("\n");
         String textBack = "";
 
-        foreach(String n in textSliced)
+        foreach (String n in textSliced)
         {
-            textBack += "> "+n+"\n";
+            textBack += "> " + n + "\n";
         }
 
         return textBack;
@@ -269,7 +269,7 @@ public class DgDocx
             textBuilder.Append(constructorBase);
             constructorBase = "";
         }
-        
+
         textBuilder.Append("\n\n");
     }
 

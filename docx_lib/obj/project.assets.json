@@ -1,8 +1,8 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {
-      "DocumentFormat.OpenXml/2.18.0": {
+    "net7.0": {
+      "DocumentFormat.OpenXml/2.15.0": {
         "type": "package",
         "dependencies": {
           "System.IO.Packaging": "4.7.0"
@@ -284,14 +284,14 @@
     }
   },
   "libraries": {
-    "DocumentFormat.OpenXml/2.18.0": {
-      "sha512": "5fmehgA7WmJD551QwBhvjSsEmMbCQ/yfW83ZLfbPx1TeQGm0ikGIwAvz/XfO4veCjYWpBQfFH9elVhC2Y+HatQ==",
+    "DocumentFormat.OpenXml/2.15.0": {
+      "sha512": "ymfVWFza7DScxwGXRjqevoOe/UoZdaZsbdzEHlkq3nzyQmMwoD04KQwlE8qw3iUAmIn7r3PjEaqQZ4JtuQj35A==",
       "type": "package",
-      "path": "documentformat.openxml/2.18.0",
+      "path": "documentformat.openxml/2.15.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "documentformat.openxml.2.18.0.nupkg.sha512",
+        "documentformat.openxml.2.15.0.nupkg.sha512",
         "documentformat.openxml.nuspec",
         "icon.png",
         "lib/net35/DocumentFormat.OpenXml.dll",
@@ -1308,8 +1308,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net6.0": [
-      "DocumentFormat.OpenXml >= 2.18.0",
+    "net7.0": [
       "HtmlToOpenXml.dll >= 2.3.0",
       "Markdig >= 0.30.4"
     ]
@@ -1336,15 +1335,15 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net6.0"
+        "net7.0"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "projectReferences": {
             "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\Html2OpenXml\\HtmlToOpenXml.csproj": {
               "projectPath": "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\Html2OpenXml\\HtmlToOpenXml.csproj"
@@ -1359,13 +1358,9 @@
       }
     },
     "frameworks": {
-      "net6.0": {
-        "targetAlias": "net6.0",
+      "net7.0": {
+        "targetAlias": "net7.0",
         "dependencies": {
-          "DocumentFormat.OpenXml": {
-            "target": "Package",
-            "version": "[2.18.0, )"
-          },
           "Markdig": {
             "target": "Package",
             "version": "[0.30.4, )"
@@ -1387,7 +1382,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
