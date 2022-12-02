@@ -9,8 +9,14 @@ internal class Program
 {
     static async Task Main(string[] args)
     {
-        var outdir = "C:/Users/Fabia/OneDrive/Documents/GitHub/cli2/docx_md/test_results/";
-        string[] files = Directory.GetFiles("C:/Users/Fabia/OneDrive/Documents/GitHub/cli2/docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
+
+        //var outdir = "C:/Users/Fabia/OneDrive/Documents/GitHub/cli2/docx_md/test_results/";
+        //string[] files = Directory.GetFiles("C:/Users/Fabia/OneDrive/Documents/GitHub/cli2/docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
+       
+        var outdir = @"./../../../../docx_md/test_results/";
+        string[] files = Directory.GetFiles(@"./../../../../docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
+
+
 
         foreach (var mdFile in files)
         {
