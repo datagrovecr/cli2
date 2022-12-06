@@ -694,10 +694,10 @@ namespace HtmlToOpenXml
 		{
 			CompleteCurrentParagraph(true);
 
-			if(en.PreviousTag == "<blockquote>")
+/*			if(en.PreviousTag == "<blockquote>")
 			{
                 //p.AppendChild(new ParagraphProperties(new Indentation() { Left = "720" }));
-            }
+            }*/
 
 			// Respect this order: this is the way the browsers apply them
 			String attrValue = en.StyleAttributes["text-align"];

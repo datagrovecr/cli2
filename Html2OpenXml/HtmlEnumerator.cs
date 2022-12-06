@@ -28,8 +28,8 @@ namespace HtmlToOpenXml
 		private IEnumerator<String> en;
 		private String[] enArray;
 		private int enArrayIndex = new int();
-        private String current, currentTag, nextTag, previousTag;
-		private bool isChecked;
+        private String current, currentTag, nextTag;//previousTag
+        private bool isChecked;
 		private HtmlAttributeCollection attributes, styleAttributes;
 
 
@@ -248,7 +248,7 @@ namespace HtmlToOpenXml
 			}
 		}
 
-		public void SetPreviousTag(bool firstTag = false)
+/*		public void SetPreviousTag(bool firstTag = false)
 		{
             Regex tagCheck = new Regex(@"^<\/?[a-z]+[1-6]?\s?.*?\/?>$");
 
@@ -271,14 +271,14 @@ namespace HtmlToOpenXml
                 Match m = stripTagRegex.Match(tag);
                 previousTag = m.Success ? m.Groups[1].Value + ">" : null;
             }
-        }
+        }*/
 
 		public void MoveNextTag()
 		{
             int i = 1;
             Regex tagCheck = new Regex(@"^<\/?[a-z]+[1-6]?\s?.*?\/?>$"); 
 
-            if (enArray.Length - 1 < enArrayIndex + i)
+            if (enArray.Length - 1 <= enArrayIndex + i)
             {
                 nextTag = null;
             }else
@@ -294,7 +294,7 @@ namespace HtmlToOpenXml
                     i++;
                     tag = enArray[enArrayIndex + i];
                 }
-				SetPreviousTag();
+				//SetPreviousTag();
                 enArrayIndex = enArrayIndex + i;
 
                 Match m = stripTagRegex.Match(tag);

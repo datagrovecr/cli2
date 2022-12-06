@@ -94,12 +94,12 @@ namespace HtmlToOpenXml
 
 			// Start a new processing
 			paragraphs.Add(currentParagraph = htmlStyles.Paragraph.NewParagraph());
-			if (htmlStyles.DefaultStyles.ParagraphStyle != null)
+			/*if (htmlStyles.DefaultStyles.ParagraphStyle != null)
 			{
 				currentParagraph.ParagraphProperties = new ParagraphProperties {
 					ParagraphStyleId = new ParagraphStyleId { Val = htmlStyles.DefaultStyles.ParagraphStyle }
 				};
-			}
+			}*/
 
 			HtmlEnumerator en = new HtmlEnumerator(html);
 			ProcessHtmlChunks(en, null);
@@ -232,7 +232,7 @@ namespace HtmlToOpenXml
 		/// Continue to process until we found endTag.
 		/// </summary>
 		private void AlternateProcessHtmlChunks(HtmlEnumerator en, string endTag)
-		{
+		{//aca
 			if (elements.Count > 0) CompleteCurrentParagraph();
 			ProcessHtmlChunks(en, endTag);
             en.MoveNextTag();
