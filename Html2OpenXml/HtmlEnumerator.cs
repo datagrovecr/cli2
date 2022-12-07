@@ -240,40 +240,40 @@ namespace HtmlToOpenXml
 			}
 		}
 
-		public String PreviousTag
-		{
-			get
-			{
-				return previousTag;
-			}
-		}
-
-/*		public void SetPreviousTag(bool firstTag = false)
-		{
-            Regex tagCheck = new Regex(@"^<\/?[a-z]+[1-6]?\s?.*?\/?>$");
-
-            int i = 2;
-
-            if (enArrayIndex - i < 0)
+        /*		public String PreviousTag
             {
-                previousTag = null;
-            }
-            else
-            {
-                String tag = enArray[enArrayIndex - i];
-
-                while (!tagCheck.IsMatch(tag) && enArrayIndex - i >= 0)
+                get
                 {
-                    tag = enArray[enArrayIndex - i];
-                    i++;
+                    return previousTag;
                 }
-
-                Match m = stripTagRegex.Match(tag);
-                previousTag = m.Success ? m.Groups[1].Value + ">" : null;
             }
-        }*/
 
-		public void MoveNextTag()
+    	public void SetPreviousTag(bool firstTag = false)
+            {
+                Regex tagCheck = new Regex(@"^<\/?[a-z]+[1-6]?\s?.*?\/?>$");
+
+                int i = 2;
+
+                if (enArrayIndex - i < 0)
+                {
+                    previousTag = null;
+                }
+                else
+                {
+                    String tag = enArray[enArrayIndex - i];
+
+                    while (!tagCheck.IsMatch(tag) && enArrayIndex - i >= 0)
+                    {
+                        tag = enArray[enArrayIndex - i];
+                        i++;
+                    }
+
+                    Match m = stripTagRegex.Match(tag);
+                    previousTag = m.Success ? m.Groups[1].Value + ">" : null;
+                }
+            }*/
+
+        public void MoveNextTag()
 		{
             int i = 1;
             Regex tagCheck = new Regex(@"^<\/?[a-z]+[1-6]?\s?.*?\/?>$"); 
