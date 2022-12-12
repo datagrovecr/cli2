@@ -77,16 +77,17 @@ namespace HtmlToOpenXml
 
 		private void ProcessBlockQuote(HtmlEnumerator en)
 		{
-			CompleteCurrentParagraph(true);
-
-            currentParagraph = htmlStyles.Paragraph.NewParagraph();
+			//CompleteCurrentParagraph(true);
+			
+            //currentParagraph = htmlStyles.Paragraph.NewParagraph();
 
             // Save the new paragraph reference to support nested numbering list.
 
-			AlternateProcessHtmlChunks(en, en.ClosingCurrentTag);
+			AlternateProcessHtmlChunks(en, "</blockquote>");
 
-			CompleteCurrentParagraph(true);
-		}
+            //CompleteCurrentParagraph(true);
+       
+        }
 
 		#endregion
 
@@ -693,17 +694,24 @@ namespace HtmlToOpenXml
 		private void ProcessParagraph(HtmlEnumerator en)
 		{
 			CompleteCurrentParagraph(true);
-
-/*			if(en.PreviousTag == "<blockquote>")
+			//WE NEED A FIND PARENT TAG FOR BLOCKQUOTE
+			if(en.PreviousTag == "<blockquote>")
 			{
-                //p.AppendChild(new ParagraphProperties(new Indentation() { Left = "720" }));
-            }*/
+				currentParagraph.AppendChild(new ParagraphProperties(
+                    new Indentation() { Left = "500", Right = "500" },
+                    new ParagraphBorders() { LeftBorder = new LeftBorder() { Size = 24, Space = 15, Color = "0000FF", Val = BorderValues.Single } }
+					));
+              
+            }
 
-			// Respect this order: this is the way the browsers apply them
-			String attrValue = en.StyleAttributes["text-align"];
+
+            
+
+            // Respect this order: this is the way the browsers apply them
+            String attrValue = en.StyleAttributes["text-align"];
 			if (attrValue == null) attrValue = en.Attributes["align"];
-
-			if (attrValue != null)
+            
+            if (attrValue != null)
 			{
 				JustificationValues? align = Converter.ToParagraphAlign(attrValue);
 				if (align.HasValue)

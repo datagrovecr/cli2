@@ -94,14 +94,16 @@ namespace HtmlToOpenXml
 
 			// Start a new processing
 			paragraphs.Add(currentParagraph = htmlStyles.Paragraph.NewParagraph());
-			/*if (htmlStyles.DefaultStyles.ParagraphStyle != null)
+			if (htmlStyles.DefaultStyles.ParagraphStyle != null)
 			{
 				currentParagraph.ParagraphProperties = new ParagraphProperties {
 					ParagraphStyleId = new ParagraphStyleId { Val = htmlStyles.DefaultStyles.ParagraphStyle }
 				};
-			}*/
+			}
+            
+	
 
-			HtmlEnumerator en = new HtmlEnumerator(html);
+            HtmlEnumerator en = new HtmlEnumerator(html);
 			ProcessHtmlChunks(en, null);
 
             if (elements.Count > 0)
@@ -213,9 +215,21 @@ namespace HtmlToOpenXml
 				}
 				else
 				{
-                    Run run = new Run(
+                    
+                    string[] words = en.Current.Split('\n');
+					Run run = new Run();
+					for (int i = 0; i < words.Length; i++)
+					{
+                    
+						//System.Console.WriteLine($"{word}");
+                        run.AppendChild(new Text(HttpUtility.HtmlDecode(words[i])) { Space = SpaceProcessingModeValues.Preserve });
+                        if(!(i==words.Length-1)) run.AppendChild(new Break());
+                    }
+
+                    /*Run run = new Run(
 						new Text(HttpUtility.HtmlDecode(en.Current)) { Space = SpaceProcessingModeValues.Preserve }
-					);
+					);*/
+
 					// apply the previously discovered style
 					htmlStyles.Runs.ApplyTags(run);
 					elements.Add(run);
@@ -232,7 +246,7 @@ namespace HtmlToOpenXml
 		/// Continue to process until we found endTag.
 		/// </summary>
 		private void AlternateProcessHtmlChunks(HtmlEnumerator en, string endTag)
-		{//aca
+		{
 			if (elements.Count > 0) CompleteCurrentParagraph();
 			ProcessHtmlChunks(en, endTag);
             en.MoveNextTag();

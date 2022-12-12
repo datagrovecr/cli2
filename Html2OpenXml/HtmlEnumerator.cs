@@ -28,8 +28,8 @@ namespace HtmlToOpenXml
 		private IEnumerator<String> en;
 		private String[] enArray;
 		private int enArrayIndex = new int();
-        private String current, currentTag, nextTag;//previousTag
-        private bool isChecked;
+        private String current, currentTag, nextTag, previousTag;
+		private bool isChecked;
 		private HtmlAttributeCollection attributes, styleAttributes;
 
 
@@ -67,8 +67,10 @@ namespace HtmlToOpenXml
 			//html = Regex.Replace(html, @"<table.*?>(\s+</?(?=(thead|tbody|tfoot))).+?</\2>\s+</table>", PreserveTablePartOrder, RegexOptions.Singleline);
 			html = Regex.Replace(html, "(<table.*?>)(.*?)(</table>)", PreserveTablePartOrder, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-			// Split our html using the tags
-			String[] lines = Regex.Split(html, @"(</?\w+[^>]*/?>)", RegexOptions.Singleline);
+
+   
+            // Split our html using the tags
+            String[] lines = Regex.Split(html, @"(</?\w+[^>]*/?>)", RegexOptions.Singleline);
 
 			this.en = (lines as IEnumerable<String>).GetEnumerator();
 			enArray = lines;
@@ -240,13 +242,17 @@ namespace HtmlToOpenXml
 			}
 		}
 
-        /*		public String PreviousTag
-            {
-                get
-                {
-                    return previousTag;
-                }
-            }
+
+		public String PreviousTag
+		{
+			get
+			{
+				return previousTag;
+			}
+		}
+
+	
+
 
     	public void SetPreviousTag(bool firstTag = false)
             {
@@ -271,7 +277,7 @@ namespace HtmlToOpenXml
                     Match m = stripTagRegex.Match(tag);
                     previousTag = m.Success ? m.Groups[1].Value + ">" : null;
                 }
-            }*/
+            }
 
         public void MoveNextTag()
 		{
@@ -294,7 +300,7 @@ namespace HtmlToOpenXml
                     i++;
                     tag = enArray[enArrayIndex + i];
                 }
-				//SetPreviousTag();
+				SetPreviousTag();
                 enArrayIndex = enArrayIndex + i;
 
                 Match m = stripTagRegex.Match(tag);
