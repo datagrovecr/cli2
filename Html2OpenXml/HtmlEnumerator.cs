@@ -10,6 +10,7 @@
  * PARTICULAR PURPOSE.
  */
 using DocumentFormat.OpenXml.Wordprocessing;
+using HtmlToOpenXml.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,12 +33,12 @@ namespace HtmlToOpenXml
         private String current, currentTag, nextTag, previousTag;
 		private bool isChecked;
 		private HtmlAttributeCollection attributes, styleAttributes;
+        private List<HieNode> hierachy = new List<HieNode>();
 
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public HtmlEnumerator(String html)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public HtmlEnumerator(String html)
         {
 			// Clean a bit the html before processing
 
@@ -75,6 +76,7 @@ namespace HtmlToOpenXml
 
 			this.en = (lines as IEnumerable<String>).GetEnumerator();
 			enArray = lines;
+            mapHirearchy();
 		}
 
 		public void Dispose()
@@ -321,52 +323,40 @@ namespace HtmlToOpenXml
 			}
 		}
 
+		private void mapHirearchy()
+		{
+            //do hierarchy
+            for (int i = 0; i < enArray.Length; i++)
+            {
+                if (!isHtmlTag(i)) continue;
+                for (int e = i; e < enArray.Length; e++)
+                {
+                    if (enArray[i].Insert(1, "/") == enArray[e])
+                    {
+                        //SAVE I AND E
+                        hierachy.Add(new HieNode(i, e, enArray[i]));
+                        break;
+                    }
+                }
+            }
+
+        }
+
         /// <summary>
         /// gets the parent tag of the current nested tag
         /// </summary>
         public String getParent()
         {
-			//do hierarchy
-			int result = -1;
-			for (int i = 0; i < enArray.Length; i++)
+            int result = -1;
+			foreach (HieNode Childtag in hierachy)
 			{
-                if (!isHtmlTag(i)) continue;
-				for (int e = i; e < enArray.Length; e++)
+				if (Childtag.start ==1)
 				{
-					if (enArray[i].Insert(1, "/") == enArray[e])
-					{
-						//SAVE I AND E
-
-						Console.WriteLine(enArray[e]);
-						break;
-					}
+					Console.WriteLine("pp");
 				}
-            }
-
-
-
-            /*
-             *           int openerConsec = 0;            
-                        for (int i = CurrentIndex; i >= 0; i--)
-                        {
-
-
-                            if (!isHtmlTag(i)) continue;
-
-                            if (isHtmlTagOpener(i)) {
-                                openerConsec++;
-                            }
-                            else
-                            {
-                                openerConsec = 0;
-                            }
-
-                            if (openerConsec == 2) result= i;
-
-                            //Console.WriteLine(isHtmlTagOpener(i));
-                        }
-
-                        */
+				
+			}
+           
             if (result == -1) return "";
             return enArray[result];
         }
