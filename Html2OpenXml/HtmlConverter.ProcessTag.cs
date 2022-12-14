@@ -704,9 +704,6 @@ namespace HtmlToOpenXml
               
             }
 
-
-            
-
             // Respect this order: this is the way the browsers apply them
             String attrValue = en.StyleAttributes["text-align"];
 			if (attrValue == null) attrValue = en.Attributes["align"];

@@ -199,11 +199,14 @@ namespace HtmlToOpenXml
 
 		private void ProcessHtmlChunks(HtmlEnumerator en, String endTag)
 		{
-			while (en.MoveUntilMatch(endTag))
+            Console.WriteLine(en.getParent());
+            while (en.MoveUntilMatch(endTag))
 			{
-				
-				if (en.IsCurrentHtmlTag)
+                
+                if (en.IsCurrentHtmlTag)
 				{
+                    
+
                     if (knownTags.TryGetValue(en.CurrentTag, out Action<HtmlEnumerator> action))
 					{
                         en.MoveNextTag();
@@ -225,10 +228,6 @@ namespace HtmlToOpenXml
                         run.AppendChild(new Text(HttpUtility.HtmlDecode(words[i])) { Space = SpaceProcessingModeValues.Preserve });
                         if(!(i==words.Length-1)) run.AppendChild(new Break());
                     }
-
-                    /*Run run = new Run(
-						new Text(HttpUtility.HtmlDecode(en.Current)) { Space = SpaceProcessingModeValues.Preserve }
-					);*/
 
 					// apply the previously discovered style
 					htmlStyles.Runs.ApplyTags(run);

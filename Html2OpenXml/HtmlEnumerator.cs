@@ -9,6 +9,7 @@
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
  * PARTICULAR PURPOSE.
  */
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -320,15 +321,91 @@ namespace HtmlToOpenXml
 			}
 		}
 
-		/// <summary>
-		/// Gets the line or tag at the current position of the enumerator.
-		/// </summary>
-		public String Current
+        /// <summary>
+        /// gets the parent tag of the current nested tag
+        /// </summary>
+        public String getParent()
+        {
+			//do hierarchy
+			int result = -1;
+			for (int i = 0; i < enArray.Length; i++)
+			{
+                if (!isHtmlTag(i)) continue;
+				for (int e = i; e < enArray.Length; e++)
+				{
+					if (enArray[i].Insert(1, "/") == enArray[e])
+					{
+						//SAVE I AND E
+
+						Console.WriteLine(enArray[e]);
+						break;
+					}
+				}
+            }
+
+
+
+            /*
+             *           int openerConsec = 0;            
+                        for (int i = CurrentIndex; i >= 0; i--)
+                        {
+
+
+                            if (!isHtmlTag(i)) continue;
+
+                            if (isHtmlTagOpener(i)) {
+                                openerConsec++;
+                            }
+                            else
+                            {
+                                openerConsec = 0;
+                            }
+
+                            if (openerConsec == 2) result= i;
+
+                            //Console.WriteLine(isHtmlTagOpener(i));
+                        }
+
+                        */
+            if (result == -1) return "";
+            return enArray[result];
+        }
+
+		private bool isHtmlTag(int indexPosition) {
+			
+			string line = enArray[indexPosition];
+
+            return (
+					line.Length > 1
+					&& line[0] == '<'
+					&& (char.IsLetter(line[1]) || line[1] == '/')
+					);
+        }
+
+        private bool isHtmlTagOpener(int indexPosition)
+        {
+
+            string line = enArray[indexPosition];
+
+            return (
+                    line.Length > 1
+                    && line[0] == '<'
+                    && char.IsLetter(line[1]) 
+                    );
+        }
+        /// <summary>
+        /// Gets the line or tag at the current position of the enumerator.
+        /// </summary>
+        public String Current
 		{
 			get { return current; }
 		}
 
-		Object System.Collections.IEnumerator.Current
+        public int CurrentIndex
+        {
+            get { return enArrayIndex; }
+        }
+        Object System.Collections.IEnumerator.Current
 		{
 			get { return current; }
 		}
