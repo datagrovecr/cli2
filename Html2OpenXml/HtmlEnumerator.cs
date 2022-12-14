@@ -76,7 +76,12 @@ namespace HtmlToOpenXml
 
 			this.en = (lines as IEnumerable<String>).GetEnumerator();
 			enArray = lines;
-            mapHirearchy(0,0);
+            mapHirearchy(0, enArray.Length, 0);
+            foreach (HieNode tag in hierachy.ToList() )
+			{
+                mapHirearchy(tag.start+1 , tag.end, tag.start);
+            }
+            
 		}
 
 		public void Dispose()
@@ -323,10 +328,10 @@ namespace HtmlToOpenXml
 			}
 		}
 
-		private void mapHirearchy(int beggining,int parentIndex)
+		private void mapHirearchy(int beggining, int ending, int parentIndex)
 		{
             //do hierarchy
-            for (int i = beggining; i < enArray.Length; i++)
+            for (int i = beggining; i < ending; i++)
             {
                 HieNode currentNode = new HieNode();
 				currentNode.parent = parentIndex;
@@ -345,12 +350,8 @@ namespace HtmlToOpenXml
 						i=e+1;
                         break;
 					}
-					else if(isHtmlTagOpener(e)&& e!=i)
-					{
-						mapHirearchy(e,i);
-					}
+					
                 }
-				//break;
             }
 
         }
@@ -363,11 +364,13 @@ namespace HtmlToOpenXml
             int result = -1;
 			foreach (HieNode Childtag in hierachy)
 			{
-			/*	if (Childtag.start ==1)
+				if (Childtag.end == CurrentIndex)
 				{
+					result = Childtag.parent;
 					Console.WriteLine("pp");
+					break;
 				}
-			*/	
+			
 			}
            
             if (result == -1) return "";

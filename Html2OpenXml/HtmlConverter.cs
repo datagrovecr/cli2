@@ -199,7 +199,7 @@ namespace HtmlToOpenXml
 
 		private void ProcessHtmlChunks(HtmlEnumerator en, String endTag)
 		{
-            Console.WriteLine(en.getParent());
+            
             while (en.MoveUntilMatch(endTag))
 			{
                 
@@ -226,7 +226,8 @@ namespace HtmlToOpenXml
                     
 						//System.Console.WriteLine($"{word}");
                         run.AppendChild(new Text(HttpUtility.HtmlDecode(words[i])) { Space = SpaceProcessingModeValues.Preserve });
-                        if(!(i==words.Length-1)) run.AppendChild(new Break());
+                        if(!(i==words.Length)) run.AppendChild(new Break());
+                        //if (!(i == words.Length - 1)) run.AppendChild(new Break());
                     }
 
 					// apply the previously discovered style

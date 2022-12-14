@@ -695,7 +695,7 @@ namespace HtmlToOpenXml
 		{
 			CompleteCurrentParagraph(true);
 			//WE NEED A FIND PARENT TAG FOR BLOCKQUOTE
-			if(en.PreviousTag == "<blockquote>")
+			if(en.getParent() == "<blockquote>")
 			{
 				currentParagraph.AppendChild(new ParagraphProperties(
                     new Indentation() { Left = "500", Right = "500" },
