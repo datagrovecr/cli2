@@ -367,7 +367,6 @@ namespace HtmlToOpenXml
 				if (Childtag.end == CurrentIndex)
 				{
 					result = Childtag.parent;
-					Console.WriteLine("pp");
 					break;
 				}
 			

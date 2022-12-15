@@ -15,7 +15,7 @@ namespace HtmlToOpenXml.Primitives
         public int end =-1;
         public string tag ="";
         public int parent; //tells the index position of the parent
-        private List<HieNode> child = new List<HieNode>();
+        private List<HieNode> child = new List<HieNode>();//maybe later i will try to add the child tags
 
         public HieNode()
         {

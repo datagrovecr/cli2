@@ -694,14 +694,31 @@ namespace HtmlToOpenXml
 		private void ProcessParagraph(HtmlEnumerator en)
 		{
 			CompleteCurrentParagraph(true);
-			//WE NEED A FIND PARENT TAG FOR BLOCKQUOTE
-			if(en.getParent() == "<blockquote>")
+			//WE NEED A FIND PARENT TAG FOR BLOCKQUOTE 
+			//new Spacing() { Val = 12 }
+			
+            if (en.getParent() == "<blockquote>")
 			{
 				currentParagraph.AppendChild(new ParagraphProperties(
                     new Indentation() { Left = "500", Right = "500" },
                     new ParagraphBorders() { LeftBorder = new LeftBorder() { Size = 24, Space = 15, Color = "0000FF", Val = BorderValues.Single } }
-					));
-              
+					
+					,
+					new SpacingBetweenLines() {BeforeLines=300}
+					)
+				);
+
+			}
+			else
+			{
+                //add the spacing
+
+
+                currentParagraph.AppendChild(new ParagraphProperties(
+                    
+					new SpacingBetweenLines() {BeforeLines=300}
+                    )
+                );
             }
 
             // Respect this order: this is the way the browsers apply them
@@ -717,10 +734,13 @@ namespace HtmlToOpenXml
 				}
 			}
 
-			List<OpenXmlElement> styleAttributes = new List<OpenXmlElement>();
+            List<OpenXmlElement> styleAttributes = new List<OpenXmlElement>();
+
 			bool newParagraph = ProcessContainerAttributes(en, styleAttributes);
 
-			if (styleAttributes.Count > 0)
+			
+
+            if (styleAttributes.Count > 0)
 				htmlStyles.Runs.BeginTag(en.CurrentTag, styleAttributes.ToArray());
 
 			if (newParagraph)
@@ -728,6 +748,7 @@ namespace HtmlToOpenXml
 				AlternateProcessHtmlChunks(en, en.ClosingCurrentTag);
 				ProcessClosingParagraph(en);
 			}
+			
 		}
 
 		#endregion
