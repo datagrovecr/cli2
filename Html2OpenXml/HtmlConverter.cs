@@ -387,7 +387,7 @@ namespace HtmlToOpenXml
 					new Endnote(
 						new Paragraph(
 							new ParagraphProperties {
-								SpacingBetweenLines = new SpacingBetweenLines() { After = "0", Line = "240", LineRule = LineSpacingRuleValues.Auto }
+								SpacingBetweenLines = new SpacingBetweenLines() { After = "0", Line = "200", LineRule = LineSpacingRuleValues.Auto }
 							},
 							new Run(
 								new SeparatorMark())
@@ -396,7 +396,7 @@ namespace HtmlToOpenXml
 					new Endnote(
 						new Paragraph(
 							new ParagraphProperties {
-								SpacingBetweenLines = new SpacingBetweenLines() { After = "0", Line = "240", LineRule = LineSpacingRuleValues.Auto }
+								SpacingBetweenLines = new SpacingBetweenLines() { After = "0", Line = "200", LineRule = LineSpacingRuleValues.Auto }
 							},
 							new Run(
 								new ContinuationSeparatorMark())

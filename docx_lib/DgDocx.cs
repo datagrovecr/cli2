@@ -91,10 +91,8 @@ public class DgDocx
                     ProcessParagraph((Paragraph)block, textBuilder);
                 }
 
-                if (block is Table)
-                {
-                    ProcessTable((Table)block, textBuilder);
-                }
+                if (block is Table) ProcessTable((Table)block, textBuilder);
+                
             }
         }
 
@@ -195,7 +193,7 @@ public class DgDocx
             return prefix = ">";
         }
 
-        return null;
+        return prefix;
     }
 
     private static String ProcessRunElements(Run run)
@@ -248,7 +246,15 @@ public class DgDocx
 
             if (run.InnerText != "")
             {
-                constructorBase = run.InnerText;
+                //add /n
+                foreach (var text in run)
+                {
+                    if (text is Text)  constructorBase += text.InnerText;
+                    if (text is Break) constructorBase += "\n";
+
+
+                }
+              //  constructorBase = run.InnerText;
             }
 
             // fonts, size letter, links
@@ -262,11 +268,14 @@ public class DgDocx
             if (block.ParagraphProperties != null)
             {
                 prefix = ProcessParagraphElements(block);
+
                 if (prefix == null) prefix = "";
+                
                 if (prefix.Contains("#") || prefix.Contains("-"))
                 {
                     constructorBase = prefix + " " + constructorBase;
                 }
+
                 if (prefix.Contains(">"))
                 {
                     constructorBase = ProcessBlockQuote(run);
