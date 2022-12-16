@@ -694,8 +694,6 @@ namespace HtmlToOpenXml
 		private void ProcessParagraph(HtmlEnumerator en)
 		{
 			CompleteCurrentParagraph(true);
-			//WE NEED A FIND PARENT TAG FOR BLOCKQUOTE 
-			//new Spacing() { Val = 12 }
 			
             if (en.getParent() == "<blockquote>")
 			{
@@ -704,7 +702,7 @@ namespace HtmlToOpenXml
                     new ParagraphBorders() { LeftBorder = new LeftBorder() { Size = 24, Space = 15, Color = "0000FF", Val = BorderValues.Single } }
 					
 					,
-					new SpacingBetweenLines() {BeforeLines=300}
+					new SpacingBetweenLines() {BeforeLines=250}
 					)
 				);
 
@@ -712,11 +710,9 @@ namespace HtmlToOpenXml
 			else
 			{
                 //add the spacing
-
-
                 currentParagraph.AppendChild(new ParagraphProperties(
                     
-					new SpacingBetweenLines() {BeforeLines=300}
+					new SpacingBetweenLines() {BeforeLines= 250 }
                     )
                 );
             }

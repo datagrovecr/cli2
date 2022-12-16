@@ -221,14 +221,12 @@ namespace HtmlToOpenXml
                     
                     string[] words = en.Current.Split('\n');
 					Run run = new Run();
-                    //run.AppendChild(new Break());
                     for (int i = 0; i < words.Length; i++)
 					{
                     
                         run.AppendChild(new Text(HttpUtility.HtmlDecode(words[i])) { Space = SpaceProcessingModeValues.Preserve });
                         if (!(i==words.Length)) run.AppendChild(new Break());
                     }
-                    // apply the previously discovered style
                     htmlStyles.Runs.ApplyTags(run);
 					elements.Add(run);
 				}

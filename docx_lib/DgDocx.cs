@@ -41,7 +41,7 @@ public class DgDocx
         MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
         var html = Markdown.ToHtml(md, pipeline);
-
+        //edit on debug the h
         //All the document is being saved in the stream
         using (WordprocessingDocument doc = WordprocessingDocument.Create(inputStream, WordprocessingDocumentType.Document, true))
         {
@@ -159,7 +159,14 @@ public class DgDocx
 
     private static String ProcessParagraphElements(Paragraph block)
     {
-        String style = block.ParagraphProperties.ParagraphStyleId.Val;
+        String style = block.ParagraphProperties?.ParagraphStyleId?.Val;
+
+        if (style==null)
+        {
+            style = "single";
+            block.ParagraphProperties.AppendChild(new ParagraphStyleId() { Val = "single" });
+        }
+        
         int num;
         String prefix = "";
 
@@ -255,7 +262,7 @@ public class DgDocx
             if (block.ParagraphProperties != null)
             {
                 prefix = ProcessParagraphElements(block);
-
+                if (prefix == null) prefix = "";
                 if (prefix.Contains("#") || prefix.Contains("-"))
                 {
                     constructorBase = prefix + " " + constructorBase;
