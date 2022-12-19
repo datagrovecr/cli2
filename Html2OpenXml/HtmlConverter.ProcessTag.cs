@@ -693,20 +693,15 @@ namespace HtmlToOpenXml
 
 		private void ProcessCode(HtmlEnumerator en)
 		{
-            //<code>
-			
-           /* else if (en.getParent() == "<code>")
-            {
-                currentParagraph.AppendChild(new ParagraphProperties(
-                    new Indentation() { Left = "500", Right = "500" },
-                    new ParagraphBorders() { InnerXml = "<w:top w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:left w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:bottom w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:right w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>" },
-                    new Tabs() { InnerXml = "<w:tab w:val=\"left\" w:pos=\"916\"/>\r\n<w:tab w:val=\"left\" w:pos=\"1832\"/>\r\n<w:tab w:val=\"left\" w:pos=\"2748\"/>\r\n<w:tab w:val=\"left\" w:pos=\"3664\"/>\r\n<w:tab w:val=\"left\" w:pos=\"4580\"/>\r\n<w:tab w:val=\"left\" w:pos=\"5496\"/>\r\n<w:tab w:val=\"left\" w:pos=\"6412\"/>\r\n<w:tab w:val=\"left\" w:pos=\"7328\"/>\r\n<w:tab w:val=\"left\" w:pos=\"8244\"/>\r\n<w:tab w:val=\"left\" w:pos=\"9160\"/>\r\n<w:tab w:val=\"left\" w:pos=\"10076\"/>\r\n<w:tab w:val=\"left\" w:pos=\"10992\"/>\r\n<w:tab w:val=\"left\" w:pos=\"11908\"/>\r\n<w:tab w:val=\"left\" w:pos=\"12824\"/>\r\n<w:tab w:val=\"left\" w:pos=\"13740\"/>\r\n<w:tab w:val=\"left\" w:pos=\"14656\"/>" },
-                    new Shading() { Val = ShadingPatternValues.Clear, Color = "auto", Fill = "F8F8F8" },
-                    new SpacingBetweenLines() { BeforeLines = 250 }
-                    )
-                );
-            }*/
-
+            currentParagraph.AppendChild(new ParagraphProperties(
+                       new Indentation() { Left = "500", Right = "500" },
+                       new ParagraphBorders() { InnerXml = "<w:top w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:left w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:bottom w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:right w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>" },
+                       new Tabs() { InnerXml = "<w:tab w:val=\"left\" w:pos=\"916\"/>\r\n<w:tab w:val=\"left\" w:pos=\"1832\"/>\r\n<w:tab w:val=\"left\" w:pos=\"2748\"/>\r\n<w:tab w:val=\"left\" w:pos=\"3664\"/>\r\n<w:tab w:val=\"left\" w:pos=\"4580\"/>\r\n<w:tab w:val=\"left\" w:pos=\"5496\"/>\r\n<w:tab w:val=\"left\" w:pos=\"6412\"/>\r\n<w:tab w:val=\"left\" w:pos=\"7328\"/>\r\n<w:tab w:val=\"left\" w:pos=\"8244\"/>\r\n<w:tab w:val=\"left\" w:pos=\"9160\"/>\r\n<w:tab w:val=\"left\" w:pos=\"10076\"/>\r\n<w:tab w:val=\"left\" w:pos=\"10992\"/>\r\n<w:tab w:val=\"left\" w:pos=\"11908\"/>\r\n<w:tab w:val=\"left\" w:pos=\"12824\"/>\r\n<w:tab w:val=\"left\" w:pos=\"13740\"/>\r\n<w:tab w:val=\"left\" w:pos=\"14656\"/>" },
+                       new Shading() { Val = ShadingPatternValues.Clear, Color = "auto", Fill = "F8F8F8" },
+                       new SpacingBetweenLines() { BeforeLines = 250 }
+                       )
+                   );
+       
         }
 
 

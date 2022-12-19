@@ -592,7 +592,7 @@ namespace HtmlToOpenXml
 				{ "<li>", ProcessLi },
                 { "<ol>", ProcessNumberingList },
 				{ "<p>", ProcessParagraph },
-                //{ "<code>", ProcessCode },
+                { "<code>", ProcessCode },
                 { "<pre>", ProcessPre },
                 { "<q>", ProcessQuote },
 				{ "<span>", ProcessSpan },
