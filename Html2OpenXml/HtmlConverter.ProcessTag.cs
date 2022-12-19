@@ -689,9 +689,32 @@ namespace HtmlToOpenXml
 
 		#endregion
 
-		#region ProcessParagraph
+		#region ProcessCode
 
-		private void ProcessParagraph(HtmlEnumerator en)
+		private void ProcessCode(HtmlEnumerator en)
+		{
+            //<code>
+			
+           /* else if (en.getParent() == "<code>")
+            {
+                currentParagraph.AppendChild(new ParagraphProperties(
+                    new Indentation() { Left = "500", Right = "500" },
+                    new ParagraphBorders() { InnerXml = "<w:top w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:left w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:bottom w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>\r\n<w:right w:val=\"single\" w:sz=\"6\" w:space=\"7\" w:color=\"CCCCCC\"/>" },
+                    new Tabs() { InnerXml = "<w:tab w:val=\"left\" w:pos=\"916\"/>\r\n<w:tab w:val=\"left\" w:pos=\"1832\"/>\r\n<w:tab w:val=\"left\" w:pos=\"2748\"/>\r\n<w:tab w:val=\"left\" w:pos=\"3664\"/>\r\n<w:tab w:val=\"left\" w:pos=\"4580\"/>\r\n<w:tab w:val=\"left\" w:pos=\"5496\"/>\r\n<w:tab w:val=\"left\" w:pos=\"6412\"/>\r\n<w:tab w:val=\"left\" w:pos=\"7328\"/>\r\n<w:tab w:val=\"left\" w:pos=\"8244\"/>\r\n<w:tab w:val=\"left\" w:pos=\"9160\"/>\r\n<w:tab w:val=\"left\" w:pos=\"10076\"/>\r\n<w:tab w:val=\"left\" w:pos=\"10992\"/>\r\n<w:tab w:val=\"left\" w:pos=\"11908\"/>\r\n<w:tab w:val=\"left\" w:pos=\"12824\"/>\r\n<w:tab w:val=\"left\" w:pos=\"13740\"/>\r\n<w:tab w:val=\"left\" w:pos=\"14656\"/>" },
+                    new Shading() { Val = ShadingPatternValues.Clear, Color = "auto", Fill = "F8F8F8" },
+                    new SpacingBetweenLines() { BeforeLines = 250 }
+                    )
+                );
+            }*/
+
+        }
+
+
+        #endregion
+
+        #region ProcessParagraph
+
+        private void ProcessParagraph(HtmlEnumerator en)
 		{
 			CompleteCurrentParagraph(true);
 			
@@ -707,6 +730,7 @@ namespace HtmlToOpenXml
 				);
 
 			}
+			
 			else
 			{
                 //add the spacing
@@ -756,69 +780,70 @@ namespace HtmlToOpenXml
 			CompleteCurrentParagraph();
 			currentParagraph = htmlStyles.Paragraph.NewParagraph();
 
-			// Oftenly, <pre> tag are used to renders some code examples. They look better inside a table
-            if (en.CurrentTag == "<pre>" && en.NextTag == "<code>")
-            {
-                StyleDefinitionsPart part = mainPart.StyleDefinitionsPart;
-                var styleid = "PlainTable43";
-                var stylename = "Plain Table 43";
+            // Oftenly, <pre> tag are used to renders some code examples. They look better inside a table
+            /*       if (en.CurrentTag == "<pre>" && en.NextTag == "<code>")
+                   {
+                       StyleDefinitionsPart part = mainPart.StyleDefinitionsPart;
+                       var styleid = "PlainTable43";
+                       var stylename = "Plain Table 43";
 
-				if (part == null)
-				{
-					part = TableStyleCollection.AddStylesPartToPackage(mainPart);
-					TableStyleCollection.AddNewTableStyle(part, styleid, stylename);
-				}
-				else
-				{
-					// If the style is not in the document, add it.
-					if (TableStyleCollection.IsStyleIdInDocument(part, styleid) != true)
-					{
-						// No match on styleid, so let's try style name.
-						string styleidFromName = TableStyleCollection.GetStyleIdFromStyleName(mainPart, stylename);
-						if (styleidFromName == null)
-						{
-							TableStyleCollection.AddNewTableStyle(part, styleid, stylename);
-						}
-						else
-							styleid = styleidFromName;
-					}
-				}
+                       if (part == null)
+                       {
+                           part = TableStyleCollection.AddStylesPartToPackage(mainPart);
+                           TableStyleCollection.AddNewTableStyle(part, styleid, stylename);
+                       }
+                       else
+                       {
+                           // If the style is not in the document, add it.
+                           if (TableStyleCollection.IsStyleIdInDocument(part, styleid) != true)
+                           {
+                               // No match on styleid, so let's try style name.
+                               string styleidFromName = TableStyleCollection.GetStyleIdFromStyleName(mainPart, stylename);
+                               if (styleidFromName == null)
+                               {
+                                   TableStyleCollection.AddNewTableStyle(part, styleid, stylename);
+                               }
+                               else
+                                   styleid = styleidFromName;
+                           }
+                       }
 
-				Table currentTable = new Table(
-                    new TableProperties (
-                        new TableStyle() { Val = "PlainTable43" },
-                        new TableWidth() { Width = "5000", Type = TableWidthUnitValues.Pct } // 100% * 50
-					),
-                    new TableGrid(
-                        new GridColumn() { Width = "5610" })
-				);
-                AddParagraph(currentTable);
+                       Table currentTable = new Table(
+                           new TableProperties (
+                               new TableStyle() { Val = "PlainTable43" },
+                               new TableWidth() { Width = "5000", Type = TableWidthUnitValues.Pct } // 100% * 50
+                           ),
+                           new TableGrid(
+                               new GridColumn() { Width = "5610" })
+                       );
+                       AddParagraph(currentTable);
 
-				AlternateProcessHtmlChunks(en, "</pre>");
+                       AlternateProcessHtmlChunks(en, "</pre>");
 
-                foreach (OpenXmlElement element in elements)
-                {
-                    if (element.InnerText != "")
-                    {
-                        var tr = currentTable.AppendChild(new TableRow());
-                        var tc = tr.AppendChild(new TableCell());
-						var p = tc.AppendChild(new Paragraph());
-                        p.Append(element);
-                    }
-                }
-				elements.Clear();
-            }
-            else
-            {
-                AddParagraph(currentParagraph);
-            }
+                       foreach (OpenXmlElement element in elements)
+                       {
+                           if (element.InnerText != "")
+                           {
+                               var tr = currentTable.AppendChild(new TableRow());
+                               var tc = tr.AppendChild(new TableCell());
+                               var p = tc.AppendChild(new Paragraph());
+                               p.Append(element);
+                           }
+                       }
+                       elements.Clear();
+                   }
+                   else
+                   {
+                       AddParagraph(currentParagraph);
+                   }
+       */
+            AddParagraph(currentParagraph);
 
 
+            //Probably I'll need the loop here, when the elements are done
 
-			//Probably I'll need the loop here, when the elements are done
-
-			//CompleteCurrentParagraph();
-		}
+            //CompleteCurrentParagraph();
+        }
 
 		#endregion
 
@@ -1424,8 +1449,19 @@ namespace HtmlToOpenXml
 				AddParagraph(currentParagraph = htmlStyles.Paragraph.NewParagraph());
 		}
 
-		#endregion
+        #endregion
 
+        #region ProcessClosingCode
+
+        private void ProcessClosingCode(HtmlEnumerator en)
+        {
+            
+
+            
+        }
+
+		#endregion
+		
 		#region ProcessClosingParagraph
 
 		private void ProcessClosingParagraph(HtmlEnumerator en)

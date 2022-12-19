@@ -246,15 +246,11 @@ public class DgDocx
 
             if (run.InnerText != "")
             {
-                //add /n
                 foreach (var text in run)
                 {
                     if (text is Text)  constructorBase += text.InnerText;
                     if (text is Break) constructorBase += "\n";
-
-
                 }
-              //  constructorBase = run.InnerText;
             }
 
             // fonts, size letter, links

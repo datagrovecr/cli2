@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using HtmlToOpenXml.IO;
@@ -225,7 +226,7 @@ namespace HtmlToOpenXml
 					{
                     
                         run.AppendChild(new Text(HttpUtility.HtmlDecode(words[i])) { Space = SpaceProcessingModeValues.Preserve });
-                        if (!(i==words.Length)) run.AppendChild(new Break());
+                        if (!(i==words.Length-1)) run.AppendChild(new Break());
                     }
                     htmlStyles.Runs.ApplyTags(run);
 					elements.Add(run);
@@ -591,7 +592,8 @@ namespace HtmlToOpenXml
 				{ "<li>", ProcessLi },
                 { "<ol>", ProcessNumberingList },
 				{ "<p>", ProcessParagraph },
-				{ "<pre>", ProcessPre },
+                //{ "<code>", ProcessCode },
+                { "<pre>", ProcessPre },
                 { "<q>", ProcessQuote },
 				{ "<span>", ProcessSpan },
                 { "<section>", ProcessDiv },
@@ -613,6 +615,7 @@ namespace HtmlToOpenXml
                 { "<input>", ProcessInput },
 
 				// closing tag
+
                 { "</article>", ProcessClosingDiv },
                 { "</aside>", ProcessClosingDiv },
                 { "</b>", ProcessClosingTag },
@@ -626,6 +629,7 @@ namespace HtmlToOpenXml
 				{ "</i>", ProcessClosingTag },
 				{ "</ins>", ProcessClosingTag },
 				{ "</ol>", ProcessClosingNumberingList },
+                { "</code>", ProcessClosingCode },
                 { "</p>", ProcessClosingParagraph },
                 { "</q>", ProcessClosingQuote },
 				{ "</span>", ProcessClosingTag },
