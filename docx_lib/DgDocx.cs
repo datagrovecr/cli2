@@ -12,6 +12,7 @@ using System.Text;
 using System.IO.Compression;
 using System.Linq.Expressions;
 using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 
 public class DgDocx
 {
@@ -92,7 +93,7 @@ public class DgDocx
                 }
 
                 if (block is Table) ProcessTable((Table)block, textBuilder);
-                
+
             }
         }
 
@@ -159,12 +160,12 @@ public class DgDocx
     {
         String style = block.ParagraphProperties?.ParagraphStyleId?.Val;
 
-        if (style==null)
+        if (style == null)
         {
             style = "single";
             block.ParagraphProperties.AppendChild(new ParagraphStyleId() { Val = "single" });
         }
-        
+
         int num;
         String prefix = "";
 
@@ -248,8 +249,9 @@ public class DgDocx
             {
                 foreach (var text in run)
                 {
-                    if (text is Text)  constructorBase += text.InnerText;
+                    if (text is Text) constructorBase += text.InnerText;
                     if (text is Break) constructorBase += "\n";
+                    constructorBase += "\n";
                 }
             }
 
@@ -266,7 +268,7 @@ public class DgDocx
                 prefix = ProcessParagraphElements(block);
 
                 if (prefix == null) prefix = "";
-                
+
                 if (prefix.Contains("#") || prefix.Contains("-"))
                 {
                     constructorBase = prefix + " " + constructorBase;
@@ -278,11 +280,49 @@ public class DgDocx
                 }
 
             }
+
+
+
             textBuilder.Append(constructorBase);
             constructorBase = "";
         }
+        //if code block
+        constructorBase = textBuilder.ToString();
+        textBuilder.Clear();
+
+
+        if (isCodeBlock(block?.ParagraphProperties ))
+        {
+            constructorBase = "~~~~\n" + constructorBase + "~~~~\n";
+            textBuilder.Append(constructorBase);
+        }
+        else
+        {
+            textBuilder.Append(constructorBase);
+        }
 
         textBuilder.Append("\n\n");
+    }
+    private static bool isCodeBlock(ParagraphProperties Properties)
+    {
+        if (Properties == null) return false;
+        //- have 4 borderlines
+        bool isLines = false;
+        //-shade
+        bool isShading = false;
+        //- small indentatio
+        bool isIndentation = false;
+
+        foreach (var style in Properties)
+        {
+            if (style is Shading) isShading= true;
+            
+            if (style is ParagraphBorders) isLines= true;
+            
+            if (style is Indentation) isIndentation=true;
+        }
+
+        return (isLines && isShading && isIndentation);
     }
 
     private static void headerDivider(List<String> align, StringBuilder textBuilder)
