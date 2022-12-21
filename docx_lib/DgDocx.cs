@@ -249,8 +249,16 @@ public class DgDocx
             {
                 foreach (var text in run)
                 {
+
+
+                    
                     if (text is Text) constructorBase += text.InnerText;
+                    
                     if (text is Break) constructorBase += "\n";
+                    if (text.InnerText == "☐") { constructorBase = " [ ]"; break; }
+                    if (text.InnerText == "☒") { constructorBase = " [X]"; break; }
+
+                    
                     constructorBase += "\n";
                 }
             }
