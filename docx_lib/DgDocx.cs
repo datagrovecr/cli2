@@ -13,6 +13,7 @@ using System.IO.Compression;
 using System.Linq.Expressions;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
+//using DocumentFormat.OpenXml.Drawing;
 
 public class DgDocx
 {
@@ -263,13 +264,48 @@ public class DgDocx
                 }
             }
 
+            //Images
+            if (run.FirstChild is Drawing)
+            {
+                //OOXML
+                string ImageUrl = "";
+                foreach (var graphic in run.FirstChild.FirstChild)
+                {
+                    if (graphic is DocumentFormat.OpenXml.Drawing.Graphic)
+                    {
+                        foreach (var pic in graphic.FirstChild.FirstChild)
+                        {
+                            if (pic is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties)
+                            {
+                                foreach (var nvdp in pic)
+                                {
+                                    if (nvdp is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)
+                                    {
+                                        //listar los atributos
+                                        DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties asd =(DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)nvdp;
+
+                                        ImageUrl = asd.Name;
+                                    }
+                                    break;
+
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                
+                constructorBase = "![]("+ImageUrl+")";
+            }
+
             // fonts, size letter, links
             if (run.RunProperties != null)
             {
                 prefix = ProcessRunElements(run);
                 constructorBase = prefix + constructorBase + prefix;
             }
-
+           
             //general style, lists, aligment, spacing
             if (block.ParagraphProperties != null)
             {
