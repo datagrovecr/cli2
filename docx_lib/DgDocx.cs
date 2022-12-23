@@ -251,15 +251,31 @@ public class DgDocx
                 foreach (var text in run)
                 {
 
-
-                    
                     if (text is Text) constructorBase += text.InnerText;
-                    
                     if (text is Break) constructorBase += "\n";
+                   
+                    //checkbox
                     if (text.InnerText == "☐") { constructorBase = " [ ]"; break; }
                     if (text.InnerText == "☒") { constructorBase = " [X]"; break; }
-
+                    //Hyperlink
+                    if (text is RunProperties)
+                    {   //get to runStyles
+                        if (text.FirstChild is RunStyle)
+                        {
+                            RunStyle runStyle = (RunStyle)text.FirstChild;
+                            if (runStyle.Val == "Hyperlink")
+                            {
+                                //
+                                constructorBase= "["+ text.Parent.InnerText + "]("+"https://breakdance.github.io/breakdance/"+")";
+                            }
+                            
+                        }
+                        
+                        
+                    }
                     
+                    
+
                     constructorBase += "\n";
                 }
             }
@@ -267,36 +283,7 @@ public class DgDocx
             //Images
             if (run.FirstChild is Drawing)
             {
-                //OOXML
-                string ImageUrl = "";
-                foreach (var graphic in run.FirstChild.FirstChild)
-                {
-                    if (graphic is DocumentFormat.OpenXml.Drawing.Graphic)
-                    {
-                        foreach (var pic in graphic.FirstChild.FirstChild)
-                        {
-                            if (pic is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties)
-                            {
-                                foreach (var nvdp in pic)
-                                {
-                                    if (nvdp is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)
-                                    {
-                                        //listar los atributos
-                                        DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties asd =(DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)nvdp;
-
-                                        ImageUrl = asd.Name;
-                                    }
-                                    break;
-
-                                }
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-                
-                constructorBase = "![]("+ImageUrl+")";
+                constructorBase = "![](" + findPicUrl(run) + ")";
             }
 
             // fonts, size letter, links
@@ -305,7 +292,7 @@ public class DgDocx
                 prefix = ProcessRunElements(run);
                 constructorBase = prefix + constructorBase + prefix;
             }
-           
+
             //general style, lists, aligment, spacing
             if (block.ParagraphProperties != null)
             {
@@ -335,7 +322,7 @@ public class DgDocx
         textBuilder.Clear();
 
 
-        if (isCodeBlock(block?.ParagraphProperties ))
+        if (isCodeBlock(block?.ParagraphProperties))
         {
             constructorBase = "~~~~\n" + constructorBase + "~~~~\n";
             textBuilder.Append(constructorBase);
@@ -347,26 +334,66 @@ public class DgDocx
 
         textBuilder.Append("\n\n");
     }
+
+
     private static bool isCodeBlock(ParagraphProperties Properties)
     {
         if (Properties == null) return false;
-        //- have 4 borderlines
+        // have 4 borderlines
         bool isLines = false;
-        //-shade
+        //shade
         bool isShading = false;
-        //- small indentatio
+        //  indentation
         bool isIndentation = false;
 
         foreach (var style in Properties)
         {
-            if (style is Shading) isShading= true;
-            
-            if (style is ParagraphBorders) isLines= true;
-            
-            if (style is Indentation) isIndentation=true;
+            if (style is Shading) isShading = true;
+
+            if (style is ParagraphBorders) isLines = true;
+
+            if (style is Indentation) isIndentation = true;
         }
 
         return (isLines && isShading && isIndentation);
+    }
+
+
+    private static string findPicUrl(Run run)
+    {
+
+        string ImageUrl = "";
+        if (null == run?.FirstChild?.FirstChild) return "";
+
+        foreach (var graphic in run?.FirstChild?.FirstChild)
+        {
+            if (graphic is DocumentFormat.OpenXml.Drawing.Graphic)
+            {
+                foreach (var pic in graphic.FirstChild.FirstChild)
+                {
+                    if (pic is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties)
+                    {
+                        foreach (var nvdp in pic)
+                        {
+                            if (nvdp is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)
+                            {
+                                //listar los atributos
+                                DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr = (DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)nvdp;
+
+                                ImageUrl = picAtr.Name;
+                            }
+                            break;
+
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (ImageUrl == null) return " ";
+        return ImageUrl;
     }
 
     private static void headerDivider(List<String> align, StringBuilder textBuilder)
@@ -399,3 +426,6 @@ public class DgDocx
 
 
 }
+
+
+
