@@ -17,6 +17,7 @@ using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 
 public class DgDocx
 {
+    private static IEnumerable<HyperlinkRelationship> hyperlinks;
 
     public static void createWordprocessingDocument(string filepath)
     {
@@ -83,8 +84,10 @@ public class DgDocx
         StringBuilder textBuilder = new StringBuilder();
         var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
         StyleDefinitionsPart styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
+        hyperlinks = wordDoc.MainDocumentPart.HyperlinkRelationships;
         if (parts != null)
         {
+            
             foreach (var block in parts.ChildElements)
             {
                 if (block is Paragraph)
@@ -267,6 +270,7 @@ public class DgDocx
                             {
                                 //
                                 constructorBase= "["+ text.Parent.InnerText + "]("+"https://breakdance.github.io/breakdance/"+")";
+                                constructorBase = "[" + text.Parent.InnerText + "](" + "https://breakdance.github.io/breakdance/" + ")";
                             }
                             
                         }
