@@ -52,21 +52,7 @@ public class DgDocx
 
             // Create the document structure and add some text.
             mainPart.Document = new Document();
-            /*            Body body = mainPart.Document.AppendChild(new Body());
-
-                        if (debug) {
-                            {
-                                Paragraph para = body.AppendChild(new Paragraph());
-                                Run run = para.AppendChild(new Run());
-                                run.AppendChild(new Text("Markdown: " + md));
-                            }
-
-                            {
-                                Paragraph para2 = body.AppendChild(new Paragraph());
-                                Run run2 = para2.AppendChild(new Run());
-                                run2.AppendChild(new Text("Html: " + html));
-                            }
-                        }*/
+           
 
             HtmlConverter converter = new HtmlConverter(mainPart);
             converter.ParseHtml(html);
@@ -248,7 +234,10 @@ public class DgDocx
         foreach (var run in block.Descendants<Run>())
         {
             String prefix = "";
+            if (run is Hyperlink)
+            {
 
+            }
             if (run.InnerText != "")
             {
                 foreach (var text in run)
@@ -268,18 +257,23 @@ public class DgDocx
                             RunStyle runStyle = (RunStyle)text.FirstChild;
                             if (runStyle.Val == "Hyperlink")
                             {
-                                //
-                                constructorBase= "["+ text.Parent.InnerText + "]("+"https://breakdance.github.io/breakdance/"+")";
-                                constructorBase = "[" + text.Parent.InnerText + "](" + "https://breakdance.github.io/breakdance/" + ")";
+                              
+                              //  constructorBase= "["+ text.Parent.InnerText + "]("+"https://breakdance.github.io/breakdance/"+")";
+                              // constructorBase = "[" + text.Parent.InnerText + "](" + hyperlinks.First(leenk=> leenk.Id== leenk.Id).Id + ")";
                             }
                             
                         }
                         
                         
                     }
-                    
-                    
 
+                    
+                    //block quote
+                    if (isCodeBlock(block?.ParagraphProperties))
+                    {
+                        constructorBase = "~~~~\n" + constructorBase + "\n~~~~\n";
+                        break;
+                    }
                     constructorBase += "\n";
                 }
             }
@@ -326,7 +320,7 @@ public class DgDocx
         textBuilder.Clear();
 
 
-        if (isCodeBlock(block?.ParagraphProperties))
+        /*if (isCodeBlock(block?.ParagraphProperties))
         {
             constructorBase = "~~~~\n" + constructorBase + "~~~~\n";
             textBuilder.Append(constructorBase);
@@ -334,9 +328,11 @@ public class DgDocx
         else
         {
             textBuilder.Append(constructorBase);
-        }
+        }*/
 
-        textBuilder.Append("\n\n");
+        textBuilder.Append(constructorBase);
+        //textBuilder.Append("\n\n");
+        textBuilder.Append("\n");
     }
 
 
@@ -373,7 +369,7 @@ public class DgDocx
         {
             if (graphic is DocumentFormat.OpenXml.Drawing.Graphic)
             {
-                foreach (var pic in graphic.FirstChild.FirstChild)
+                foreach (var pic in graphic?.FirstChild?.FirstChild)
                 {
                     if (pic is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties)
                     {
