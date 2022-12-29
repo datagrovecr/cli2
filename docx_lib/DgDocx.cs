@@ -243,8 +243,24 @@ public class DgDocx
                 foreach (var text in run)
                 {
 
-                    if (text is Text) constructorBase += text.InnerText;
-                    if (text is Break) constructorBase += "\n";
+                    if (text is Text) {
+
+                        if (isBlockQuote(block?.ParagraphProperties))
+                        {
+                            constructorBase += ">" + text.InnerText;
+                            continue;
+                        }
+                        else
+                        {
+                            constructorBase += text.InnerText;
+                        }
+                    }
+
+                    if (text is Break) {
+                        
+                        constructorBase += "\n";
+                        continue;
+                    }
                    
                     //checkbox
                     if (text.InnerText == "☐") { constructorBase = " [ ]"; break; }
@@ -268,12 +284,13 @@ public class DgDocx
                     }
 
                     
-                    //block quote
+                    //code block
                     if (isCodeBlock(block?.ParagraphProperties))
                     {
                         constructorBase = "~~~~\n" + constructorBase + "\n~~~~\n";
                         break;
                     }
+                    
                     constructorBase += "\n";
                 }
             }
@@ -335,6 +352,25 @@ public class DgDocx
         textBuilder.Append("\n");
     }
 
+    private static bool isBlockQuote(ParagraphProperties? Properties)
+    {
+        if (Properties == null) return false;
+        // have 4 borderlines
+        bool isLines = false;
+        //shade
+        bool isShading = false;
+        //  indentation
+        bool isIndentation = false;
+        foreach (var style in Properties)
+        {
+            if (style is Shading) isShading = true;
+
+            if (style is ParagraphBorders) isLines = true;
+
+            if (style is Indentation) isIndentation = true;
+        }
+        return (isLines && isShading==false && isIndentation);
+    }
 
     private static bool isCodeBlock(ParagraphProperties Properties)
     {
