@@ -18,7 +18,7 @@ using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 public class DgDocx
 {
     private static IEnumerable<HyperlinkRelationship> hyperlinks;
-
+    private static int linksCount = 0;
     public static void createWordprocessingDocument(string filepath)
     {
         // Create a document by supplying the filepath. 
@@ -234,6 +234,7 @@ public class DgDocx
         foreach (var run in block.Descendants<Run>())
         {
             String prefix = "";
+            var links = block.Descendants<Hyperlink>();
             
             if (run.InnerText != "")
             {
@@ -253,16 +254,16 @@ public class DgDocx
 
                     
                     //Hyperlink
-                    var links = block.Descendants<Hyperlink>();
-                    if (links.Count() > 0)
+                    if (links.Count() > 0 && links.Count()>linksCount)
                     {
-                        var LId = links.First().Id;
+                        var LId = links.ElementAt(linksCount).Id;
                         var result = buildHyperLink(text,LId);
                         //is hyperlink
                         if (result != "" )
                         {
-                            constructorBase += result.Replace("[text.Parent.InnerText]","["+run.InnerText+"}");
-                            continue;
+                            constructorBase += result.Replace("[text.Parent.InnerText]","["+run.InnerText+"]");
+                            linksCount++;
+                            break;
                         }
 
                     }
@@ -312,7 +313,7 @@ public class DgDocx
             }
 
 
-
+            linksCount = 0;
             textBuilder.Append(constructorBase);
             constructorBase = "";
         }
