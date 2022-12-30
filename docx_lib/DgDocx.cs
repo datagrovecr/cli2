@@ -234,61 +234,45 @@ public class DgDocx
         foreach (var run in block.Descendants<Run>())
         {
             String prefix = "";
-            if (run is Hyperlink)
-            {
-
-            }
+            
             if (run.InnerText != "")
             {
+               
                 foreach (var text in run)
                 {
 
                     if (text is Text) {
-
-                        if (isBlockQuote(block?.ParagraphProperties))
-                        {
-                            constructorBase += ">" + text.InnerText;
-                            continue;
-                        }
-                        else
-                        {
-                            constructorBase += text.InnerText;
-                        }
+                        if (isBlockQuote(block?.ParagraphProperties)) {constructorBase += ">" + text.InnerText;continue;}
+                        else constructorBase += text.InnerText;
                     }
 
-                    if (text is Break) {
-                        
-                        constructorBase += "\n";
-                        continue;
-                    }
-                   
+                    if (text is Break) {constructorBase += "\n"; continue;}
                     //checkbox
-                    if (text.InnerText == "☐") { constructorBase = " [ ]"; break; }
-                    if (text.InnerText == "☒") { constructorBase = " [X]"; break; }
-                    //Hyperlink
-                    if (text is RunProperties)
-                    {   //get to runStyles
-                        if (text.FirstChild is RunStyle)
-                        {
-                            RunStyle runStyle = (RunStyle)text.FirstChild;
-                            if (runStyle.Val == "Hyperlink")
-                            {
-                              
-                              //  constructorBase= "["+ text.Parent.InnerText + "]("+"https://breakdance.github.io/breakdance/"+")";
-                              // constructorBase = "[" + text.Parent.InnerText + "](" + hyperlinks.First(leenk=> leenk.Id== leenk.Id).Id + ")";
-                            }
-                            
-                        }
-                        
-                        
-                    }
+                    if (text.InnerText == "☐") { constructorBase = " [ ]"; continue;}
+                    if (text.InnerText == "☒") { constructorBase = " [X]"; continue;}
 
                     
+                    //Hyperlink
+                    var links = block.Descendants<Hyperlink>();
+                    if (links.Count() > 0)
+                    {
+                        var LId = links.First().Id;
+                        var result = buildHyperLink(text,LId);
+                        //is hyperlink
+                        if (result != "" )
+                        {
+                            constructorBase += result.Replace("[text.Parent.InnerText]","["+run.InnerText+"}");
+                            continue;
+                        }
+
+                    }
+
+
                     //code block
                     if (isCodeBlock(block?.ParagraphProperties))
                     {
                         constructorBase = "~~~~\n" + constructorBase + "\n~~~~\n";
-                        break;
+                        continue;
                     }
                     
                     constructorBase += "\n";
@@ -337,19 +321,34 @@ public class DgDocx
         textBuilder.Clear();
 
 
-        /*if (isCodeBlock(block?.ParagraphProperties))
-        {
-            constructorBase = "~~~~\n" + constructorBase + "~~~~\n";
-            textBuilder.Append(constructorBase);
-        }
-        else
-        {
-            textBuilder.Append(constructorBase);
-        }*/
+    
 
         textBuilder.Append(constructorBase);
         //textBuilder.Append("\n\n");
         textBuilder.Append("\n");
+    }
+
+    private static string buildHyperLink(OpenXmlElement text,string id)
+    {
+        string cbt = "";
+        if (text is RunProperties)
+        {   //get to runStyles
+            if (text.FirstChild is RunStyle)
+            {
+                RunStyle runStyle = (RunStyle)text.FirstChild;
+                if (runStyle.Val == "Hyperlink")
+                {
+
+                    cbt = "[" + "text.Parent.InnerText" + "](" + hyperlinks.First(leenk => leenk.Id == id).Uri + ")";
+                    return cbt;
+                }
+
+            }
+
+
+        }
+        return "";
+
     }
 
     private static bool isBlockQuote(ParagraphProperties? Properties)
