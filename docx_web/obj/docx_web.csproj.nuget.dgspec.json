@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\docx_web\\docx_web.csproj": {}
+    "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/docx_web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\docx_web\\docx_web.csproj": {
+    "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/docx_web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\docx_web\\docx_web.csproj",
+        "projectUniqueName": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/docx_web.csproj",
         "projectName": "docx_web",
-        "projectPath": "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\docx_web\\docx_web.csproj",
-        "packagesPath": "C:\\Users\\Fabia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Fabia\\OneDrive\\Documents\\GitHub\\cli2\\docx_web\\obj\\",
+        "projectPath": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/docx_web.csproj",
+        "packagesPath": "/Users/fabianvalverde/.nuget/packages/",
+        "outputPath": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Fabia\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/fabianvalverde/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,18 +59,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Runtime.Mono.browser-wasm",
-              "version": "[7.0.0, 7.0.0]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.101/RuntimeIdentifierGraph.json"
         }
       },
       "runtimes": {

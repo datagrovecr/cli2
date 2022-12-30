@@ -52,7 +52,7 @@ public class DgDocx
 
             // Create the document structure and add some text.
             mainPart.Document = new Document();
-           
+
 
             HtmlConverter converter = new HtmlConverter(mainPart);
             converter.ParseHtml(html);
@@ -60,7 +60,7 @@ public class DgDocx
         }
     }
 
-    public async static Task docx_to_md(Stream infile, Stream outfile, String name)
+    public async static Task docx_to_md(Stream infile, Stream outfile, String name = "")
     {
         WordprocessingDocument wordDoc = WordprocessingDocument.Open(infile, false);
         DocumentFormat.OpenXml.Wordprocessing.Body body
@@ -73,7 +73,7 @@ public class DgDocx
         hyperlinks = wordDoc.MainDocumentPart.HyperlinkRelationships;
         if (parts != null)
         {
-            
+
             foreach (var block in parts.ChildElements)
             {
                 if (block is Paragraph)
@@ -89,10 +89,20 @@ public class DgDocx
 
         //This code is replacing the below one because I need to check the .md file faster
         //writing the .md file in test_result folder
-        using (var streamWriter = new StreamWriter(name + ".md"))
+        if (name != "")
         {
-            String s = textBuilder.ToString();
-            streamWriter.Write(s);
+            using (var streamWriter = new StreamWriter(name + ".md"))
+            {
+                String s = textBuilder.ToString();
+                streamWriter.Write(s);
+            }
+        }
+        else
+        {
+            outfile = new MemoryStream();
+            var writer = new StreamWriter(outfile);
+            writer.Write(textBuilder);
+            writer.Flush();
         }
 
         //commented code is for .zip files
@@ -235,33 +245,34 @@ public class DgDocx
         {
             String prefix = "";
             var links = block.Descendants<Hyperlink>();
-            
+
             if (run.InnerText != "")
             {
-               
+
                 foreach (var text in run)
                 {
 
-                    if (text is Text) {
-                        if (isBlockQuote(block?.ParagraphProperties)) {constructorBase += ">" + text.InnerText;continue;}
+                    if (text is Text)
+                    {
+                        if (isBlockQuote(block?.ParagraphProperties)) { constructorBase += ">" + text.InnerText; continue; }
                         else constructorBase += text.InnerText;
                     }
 
-                    if (text is Break) {constructorBase += "\n"; continue;}
+                    if (text is Break) { constructorBase += "\n"; continue; }
                     //checkbox
-                    if (text.InnerText == "☐") { constructorBase = " [ ]"; continue;}
-                    if (text.InnerText == "☒") { constructorBase = " [X]"; continue;}
+                    if (text.InnerText == "☐") { constructorBase = " [ ]"; continue; }
+                    if (text.InnerText == "☒") { constructorBase = " [X]"; continue; }
 
-                    
+
                     //Hyperlink
-                    if (links.Count() > 0 && links.Count()>linksCount)
+                    if (links.Count() > 0 && links.Count() > linksCount)
                     {
                         var LId = links.ElementAt(linksCount).Id;
-                        var result = buildHyperLink(text,LId);
+                        var result = buildHyperLink(text, LId);
                         //is hyperlink
-                        if (result != "" )
+                        if (result != "")
                         {
-                            constructorBase += result.Replace("[text.Parent.InnerText]","["+run.InnerText+"]");
+                            constructorBase += result.Replace("[text.Parent.InnerText]", "[" + run.InnerText + "]");
                             linksCount++;
                             break;
                         }
@@ -275,7 +286,7 @@ public class DgDocx
                         constructorBase = "~~~~\n" + constructorBase + "\n~~~~\n";
                         continue;
                     }
-                    
+
                     constructorBase += "\n";
                 }
             }
@@ -322,14 +333,14 @@ public class DgDocx
         textBuilder.Clear();
 
 
-    
+
 
         textBuilder.Append(constructorBase);
         //textBuilder.Append("\n\n");
         textBuilder.Append("\n");
     }
 
-    private static string buildHyperLink(OpenXmlElement text,string id)
+    private static string buildHyperLink(OpenXmlElement text, string id)
     {
         string cbt = "";
         if (text is RunProperties)
@@ -369,7 +380,7 @@ public class DgDocx
 
             if (style is Indentation) isIndentation = true;
         }
-        return (isLines && isShading==false && isIndentation);
+        return (isLines && isShading == false && isIndentation);
     }
 
     private static bool isCodeBlock(ParagraphProperties Properties)
