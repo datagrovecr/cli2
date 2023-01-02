@@ -101,7 +101,8 @@ public class DgDocx
         {
             
             var writer = new StreamWriter(outfile);
-            writer.Write(textBuilder);
+            String s = textBuilder.ToString();
+            writer.Write(s);
             writer.Flush();
         }
 
