@@ -99,7 +99,7 @@ public class DgDocx
         }
         else
         {
-            outfile = new MemoryStream();
+            
             var writer = new StreamWriter(outfile);
             writer.Write(textBuilder);
             writer.Flush();
