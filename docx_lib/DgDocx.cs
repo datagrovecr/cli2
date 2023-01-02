@@ -286,7 +286,6 @@ public class DgDocx
 
                     }
 
-
                     //code block
                     if (isCodeBlock(block?.ParagraphProperties))
                     {
