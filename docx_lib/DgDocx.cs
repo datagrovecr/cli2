@@ -168,7 +168,14 @@ public class DgDocx
 
         int num;
         String prefix = "";
-
+        if ("top"==block.ParagraphProperties?.ParagraphBorders?.TopBorder?.LocalName 
+            && null == block.ParagraphProperties?.ParagraphBorders?.BottomBorder
+            && null == block.ParagraphProperties?.ParagraphBorders?.LeftBorder)
+        {
+            
+            prefix += "---\n";
+            return prefix;
+        }
         //to find Heading Paragraphs
         if (style.Contains("Heading"))
         {
@@ -287,6 +294,7 @@ public class DgDocx
                         continue;
                     }
 
+                  
                     constructorBase += "\n";
                 }
             }
