@@ -13,6 +13,8 @@ using System.IO.Compression;
 using System.Linq.Expressions;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
+using System.Collections.Generic;
+
 //using DocumentFormat.OpenXml.Drawing;
 
 public class DgDocx
@@ -247,6 +249,7 @@ public class DgDocx
     private static void ProcessParagraph(Paragraph block, StringBuilder textBuilder)
     {
         String constructorBase = "";
+        bool isEsc = false; //is an escape url
 
         //iterate along every element in the Paragraphs and childrens
         foreach (var run in block.Descendants<Run>())
@@ -263,7 +266,24 @@ public class DgDocx
                     if (text is Text)
                     {
                         if (isBlockQuote(block?.ParagraphProperties)) { constructorBase += ">" + text.InnerText; continue; }
-                        else constructorBase += text.InnerText;
+                        else {
+                            if (text.InnerText.Contains("#") || text.InnerText.Contains("-")|| text.InnerText.Contains(">") || text.InnerText.Contains("[")
+                                ||text.InnerText.Contains("*"))
+                            {
+                                constructorBase += "\\"+text.InnerText;
+                                isEsc = true;
+                                continue;
+                            }
+                            else
+                            {
+                                constructorBase += text.InnerText;
+                            }
+                            if (text.InnerText=="/")
+                            {
+                                continue;
+                            }
+                        
+                        }
                     }
 
                     if (text is Break) { constructorBase += "\n"; continue; }
@@ -276,13 +296,13 @@ public class DgDocx
                     if (links.Count() > 0 && links.Count() > linksCount)
                     {
                         var LId = links.ElementAt(linksCount).Id;
-                        var result = buildHyperLink(text, LId);
+                        var result = buildHyperLink(text, LId, isEsc);
                         //is hyperlink
                         if (result != "")
                         {
-                            constructorBase += result.Replace("[text.Parent.InnerText]", "[" + run.InnerText + "]");
+                            constructorBase += result;
                             linksCount++;
-                            break;
+                            break; //this break prevents  duplication of hyperlink description
                         }
 
                     }
@@ -332,10 +352,11 @@ public class DgDocx
             }
 
 
-            linksCount = 0;
+            //linksCount = 0;
             textBuilder.Append(constructorBase);
             constructorBase = "";
         }
+        linksCount = 0;
         //if code block
         constructorBase = textBuilder.ToString();
         textBuilder.Clear();
@@ -347,19 +368,29 @@ public class DgDocx
         //textBuilder.Append("\n\n");
         textBuilder.Append("\n");
     }
-
-    private static string buildHyperLink(OpenXmlElement text, string id)
+        
+    private static string buildHyperLink(OpenXmlElement text, string id="",bool isEsc=false) //STRING LITERAL OR OPTIONAL
     {
         string cbt = "";
         if (text is RunProperties)
         {   //get to runStyles
+            //make Ienumerable of  
             if (text.FirstChild is RunStyle)
             {
                 RunStyle runStyle = (RunStyle)text.FirstChild;
                 if (runStyle.Val == "Hyperlink")
                 {
+                    if (isEsc)
+                    {
+                        cbt = hyperlinks.First(leenk => leenk.Id == id).Uri + "";
 
-                    cbt = "[" + "text.Parent.InnerText" + "](" + hyperlinks.First(leenk => leenk.Id == id).Uri + ")";
+                    }
+                    else
+                    {
+                        cbt = "[" + text.Parent.InnerText + "](" + hyperlinks.First(leenk => leenk.Id == id).Uri + ")";
+
+
+                    }
                     return cbt;
                 }
 
