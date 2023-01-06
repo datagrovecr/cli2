@@ -101,7 +101,7 @@ public class DgDocx
         }
         else
         {
-            
+
             var writer = new StreamWriter(outfile);
             String s = textBuilder.ToString();
             writer.Write(s);
@@ -171,11 +171,11 @@ public class DgDocx
 
         int num;
         String prefix = "";
-        if ("top"==block.ParagraphProperties?.ParagraphBorders?.TopBorder?.LocalName 
+        if ("top" == block.ParagraphProperties?.ParagraphBorders?.TopBorder?.LocalName
             && null == block.ParagraphProperties?.ParagraphBorders?.BottomBorder
             && null == block.ParagraphProperties?.ParagraphBorders?.LeftBorder)
         {
-            
+
             prefix += "---\n";
             return prefix;
         }
@@ -256,33 +256,39 @@ public class DgDocx
         {
             String prefix = "";
             var links = block.Descendants<Hyperlink>();
-
             if (run.InnerText != "")
             {
+                string[] escapeCharacters = new string[2];
 
                 foreach (var text in run)
                 {
 
                     if (text is Text)
                     {
-                        if (isBlockQuote(block?.ParagraphProperties)) { constructorBase += ">" + text.InnerText; continue; }
-                        else {
-                            if (text.InnerText.Contains("#") || text.InnerText.Contains("-")|| text.InnerText.Contains(">") || text.InnerText.Contains("[")
-                                ||text.InnerText.Contains("*"))
+                        escapeCharacters = ContainsEscape(text.InnerText);
+                        if (isBlockQuote(block?.ParagraphProperties)) {
+                            constructorBase += "\n";
+                            constructorBase += ">" + text.InnerText; 
+                            constructorBase += "\n"; 
+                            continue; }
+                        else
+                        {
+
+                            if (escapeCharacters[0] is not "")
                             {
-                                constructorBase += "\\"+text.InnerText;
+                                constructorBase += "" + text.InnerText.Replace(escapeCharacters[0], escapeCharacters[1]);
                                 isEsc = true;
-                                continue;
+                                //continue;
                             }
                             else
                             {
                                 constructorBase += text.InnerText;
                             }
-                            if (text.InnerText=="/")
+                            if (text.InnerText == "/")
                             {
                                 continue;
                             }
-                        
+
                         }
                     }
 
@@ -314,8 +320,11 @@ public class DgDocx
                         continue;
                     }
 
-                  
-                    constructorBase += "\n";
+                    //isBold
+                    //if (escapeCharacters[0]=="#") continue;
+
+                    
+                    //constructorBase += "\n";
                 }
             }
 
@@ -357,7 +366,6 @@ public class DgDocx
             constructorBase = "";
         }
         linksCount = 0;
-        //if code block
         constructorBase = textBuilder.ToString();
         textBuilder.Clear();
 
@@ -365,11 +373,55 @@ public class DgDocx
 
 
         textBuilder.Append(constructorBase);
-        //textBuilder.Append("\n\n");
+        //if code block
+
         textBuilder.Append("\n");
     }
+
+    private static string[] ContainsEscape(string InnerText)
+    {
+        string[] result =new string[2];
+        if (InnerText.Contains("#"))
+        {
+            result[0] = "#";
+            result[1] = "\\#";
+            return result;
+        }
+        else if (InnerText.Contains("-")) {
+            result[0] = "#";
+            result[1] = "\\#";
+            return result;
+        }
+        else if (InnerText.Contains(">")) {
+            result[0] = ">";
+            result[1] = "\\>";
+            return result;
+        }
+        else if (InnerText.Contains("[")) {
+            result[0] = "[";
+            result[1] = "\\[";
+            return result;
+        }
+        else if (InnerText.Contains("![")) {
+            result[0] = "![";
+            result[1] = "\\!\\[";
+            return result;
+        }
+        else if (InnerText.Contains("*")) {
+            result[0] = "![";
+            result[1] = "\\!\\[";
+            return result;
+        }
+        else
+        {
+            result[0] = "";
+            result[1] = "";
+            return result;
+        }
         
-    private static string buildHyperLink(OpenXmlElement text, string id="",bool isEsc=false) //STRING LITERAL OR OPTIONAL
+    }
+
+    private static string buildHyperLink(OpenXmlElement text, string id = "", bool isEsc = false) //STRING LITERAL OR OPTIONAL
     {
         string cbt = "";
         if (text is RunProperties)
