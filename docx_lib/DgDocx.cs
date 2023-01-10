@@ -15,7 +15,6 @@ using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 using System.Collections.Generic;
 
-//using DocumentFormat.OpenXml.Drawing;
 
 public class DgDocx
 {

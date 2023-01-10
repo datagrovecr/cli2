@@ -448,8 +448,9 @@ namespace HtmlToOpenXml
 					}
 				}
 
-				drawing = AddImagePart(src, alt, preferredSize);
-			}
+				//drawing = AddImagePart(src, alt, preferredSize);
+				drawing = null;
+            }
 
 			if (drawing != null)
 			{

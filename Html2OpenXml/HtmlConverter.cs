@@ -43,7 +43,7 @@ namespace HtmlToOpenXml
         private ImagePrefetcher imagePrefetcher;
         private TableContext tables;
         private readonly HtmlDocumentStyle htmlStyles;
-        private readonly IWebRequest webRequester;
+       // private readonly IWebRequest webRequester;
         private uint drawingObjId, imageObjId;
 
 
@@ -68,7 +68,7 @@ namespace HtmlToOpenXml
             this.knownTags = InitKnownTags();
             this.mainPart = mainPart ?? throw new ArgumentNullException("mainPart");
             this.htmlStyles = new HtmlDocumentStyle(mainPart);
-            this.webRequester = webRequester ?? new DefaultWebRequest();
+            //this.webRequester = webRequester ?? new DefaultWebRequest();
         }
 
 		/// <summary>
@@ -466,7 +466,7 @@ namespace HtmlToOpenXml
 		#endregion
 
 		#region AddImagePart
-
+/*
 		private Drawing AddImagePart(String imageSource, String alt, Size preferredSize)
 		{
 			if (imageObjId == UInt32.MinValue)
@@ -491,12 +491,12 @@ namespace HtmlToOpenXml
 			}
 
             // Cache all the ImagePart processed to avoid downloading the same image.
-            if (imagePrefetcher == null)
-                imagePrefetcher = new ImagePrefetcher(mainPart, webRequester);
+          *//*  if (imagePrefetcher == null)
+                imagePrefetcher = new ImagePrefetcher(mainPart, webRequester);*//*
 
-            HtmlImageInfo iinfo = imagePrefetcher.Download(imageSource);
+           // HtmlImageInfo iinfo = imagePrefetcher.Download(imageSource);
 
-            if (iinfo == null)
+            *//*if (iinfo == null)
                 return null;
 
 			if (preferredSize.IsEmpty)
@@ -507,7 +507,7 @@ namespace HtmlToOpenXml
 			{
 				Size actualSize = iinfo.Size;
 				preferredSize = ImageHeader.KeepAspectRatio(actualSize, preferredSize);
-			}
+			}*//*
 
 			long widthInEmus = new Unit(UnitMetric.Pixel, preferredSize.Width).ValueInEmus;
 			long heightInEmus = new Unit(UnitMetric.Pixel, preferredSize.Height).ValueInEmus;
@@ -549,7 +549,7 @@ namespace HtmlToOpenXml
 			);
 
 			return img;
-		}
+		}*/
 
 		#endregion
 
@@ -816,7 +816,7 @@ namespace HtmlToOpenXml
         /// Gets or sets the base Uri used to automaticaly resolve relative images 
         /// if used with ImageProcessing = AutomaticDownload.
         /// </summary>
-        [Obsolete("Provide a IWebRequest implementation or use DefaultWebRequest.BaseImageUrl")]
+      /*  [Obsolete("Provide a IWebRequest implementation or use DefaultWebRequest.BaseImageUrl")]
         public Uri BaseImageUrl
         {
             get { return (webRequester as DefaultWebRequest)?.BaseImageUrl; }
@@ -836,6 +836,7 @@ namespace HtmlToOpenXml
                     wr.BaseImageUrl = value;
             }
         }
+*/
 
 		/// <summary>
 		/// Gets or sets where the Legend tag (&lt;caption&gt;) should be rendered (above or below the table).
