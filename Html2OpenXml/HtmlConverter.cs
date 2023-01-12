@@ -18,19 +18,25 @@ using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using HtmlToOpenXml.IO;
+using System.Net.Http;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace HtmlToOpenXml
 {
+    using A = DocumentFormat.OpenXml.Drawing;
+    using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+    using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+
     using a = DocumentFormat.OpenXml.Drawing;
     using pic = DocumentFormat.OpenXml.Drawing.Pictures;
     using wp = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 
 
-
-	/// <summary>
-	/// Helper class to convert some Html text to OpenXml elements.
-	/// </summary>
-	public partial class HtmlConverter
+    /// <summary>
+    /// Helper class to convert some Html text to OpenXml elements.
+    /// </summary>
+    public partial class HtmlConverter
 	{
 		private MainDocumentPart mainPart;
 		/// <summary>The list of paragraphs that will be returned.</summary>
@@ -43,7 +49,6 @@ namespace HtmlToOpenXml
         private ImagePrefetcher imagePrefetcher;
         private TableContext tables;
         private readonly HtmlDocumentStyle htmlStyles;
-       // private readonly IWebRequest webRequester;
         private uint drawingObjId, imageObjId;
 
 
@@ -53,7 +58,7 @@ namespace HtmlToOpenXml
 		/// </summary>
 		/// <param name="mainPart">The mainDocumentPart of a document where to write the conversion to.</param>
 		/// <remarks>We preload some configuration from inside the document such as style, bookmarks,...</remarks>
-        public HtmlConverter(MainDocumentPart mainPart) : this(mainPart, null)
+         public HtmlConverter(MainDocumentPart mainPart) : this(mainPart, null)
         {
         }
 
@@ -61,14 +66,12 @@ namespace HtmlToOpenXml
         /// Constructor.
         /// </summary>
         /// <param name="mainPart">The mainDocumentPart of a document where to write the conversion to.</param>
-        /// <param name="webRequester">Factory to download the images.</param>
         /// <remarks>We preload some configuration from inside the document such as style, bookmarks,...</remarks>
-        public HtmlConverter(MainDocumentPart mainPart, IWebRequest webRequester = null)
+        public HtmlConverter(MainDocumentPart mainPart, string useless =null)
         {
             this.knownTags = InitKnownTags();
             this.mainPart = mainPart ?? throw new ArgumentNullException("mainPart");
             this.htmlStyles = new HtmlDocumentStyle(mainPart);
-            //this.webRequester = webRequester ?? new DefaultWebRequest();
         }
 
 		/// <summary>
@@ -466,7 +469,7 @@ namespace HtmlToOpenXml
 		#endregion
 
 		#region AddImagePart
-/*
+
 		private Drawing AddImagePart(String imageSource, String alt, Size preferredSize)
 		{
 			if (imageObjId == UInt32.MinValue)
@@ -490,13 +493,11 @@ namespace HtmlToOpenXml
 				if (imageObjId > 1) imageObjId++;
 			}
 
-            // Cache all the ImagePart processed to avoid downloading the same image.
-          *//*  if (imagePrefetcher == null)
-                imagePrefetcher = new ImagePrefetcher(mainPart, webRequester);*//*
 
-           // HtmlImageInfo iinfo = imagePrefetcher.Download(imageSource);
 
-            *//*if (iinfo == null)
+            HtmlImageInfo iinfo = imagePrefetcher.Download(imageSource);
+
+            if (iinfo == null)
                 return null;
 
 			if (preferredSize.IsEmpty)
@@ -507,7 +508,7 @@ namespace HtmlToOpenXml
 			{
 				Size actualSize = iinfo.Size;
 				preferredSize = ImageHeader.KeepAspectRatio(actualSize, preferredSize);
-			}*//*
+			}
 
 			long widthInEmus = new Unit(UnitMetric.Pixel, preferredSize.Width).ValueInEmus;
 			long heightInEmus = new Unit(UnitMetric.Pixel, preferredSize.Height).ValueInEmus;
@@ -549,7 +550,7 @@ namespace HtmlToOpenXml
 			);
 
 			return img;
-		}*/
+		}
 
 		#endregion
 
@@ -806,42 +807,102 @@ namespace HtmlToOpenXml
 			get { return htmlStyles; }
 		}
 
-        /// <summary>
-        /// Gets or sets how the &lt;img&gt; tag should be handled.
-        /// </summary>
-        [Obsolete("Provide a IWebRequest implementation or use DefaultWebRequest")]
-        public ImageProcessing ImageProcessing { get; set; } = ImageProcessing.AutomaticDownload;
+       
 
-        /// <summary>
-        /// Gets or sets the base Uri used to automaticaly resolve relative images 
-        /// if used with ImageProcessing = AutomaticDownload.
-        /// </summary>
-      /*  [Obsolete("Provide a IWebRequest implementation or use DefaultWebRequest.BaseImageUrl")]
-        public Uri BaseImageUrl
+        public static async Task<Stream> DownloadImageAsync(Uri uri)
         {
-            get { return (webRequester as DefaultWebRequest)?.BaseImageUrl; }
-            set
-            {
-                if (value != null)
-                {
-                    if (!value.IsAbsoluteUri)
-                        throw new ArgumentException("BaseImageUrl should be an absolute Uri");
-                    // in case of local uri (file:///) we need to be sure the uri ends with '/' or the
-                    // combination of uri = new Uri(@"C:\users\demo\images", "pic.jpg");
-                    // will eat the images part
-                    if (value.IsFile && value.LocalPath[value.LocalPath.Length - 1] != '/')
-                        value = new Uri(value.OriginalString + '/');
-                }
-                if (webRequester is DefaultWebRequest wr)
-                    wr.BaseImageUrl = value;
-            }
-        }
-*/
+            var httpClient = new HttpClient();
 
-		/// <summary>
-		/// Gets or sets where the Legend tag (&lt;caption&gt;) should be rendered (above or below the table).
-		/// </summary>
-		public CaptionPositionValues TableCaptionPosition { get; set; }
+            // Download the image and write to the file\
+            var imageBytes = await httpClient.GetByteArrayAsync(uri);
+            Stream stream = new MemoryStream(imageBytes);
+            return stream;
+        }
+        public static async Task InsertAPicture(string filepath, string url)
+        {
+                //ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+
+                Stream stream = DownloadImageAsync(new Uri(url)).Result;
+
+                //imagePart.FeedData(stream);
+
+                //AddImageToBody(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
+        }
+
+        public static Drawing AddImageToBody(string relationshipId)
+        {
+            // Define the reference of the image.
+            var element =
+                 new Drawing(
+                     new DW.Inline(
+                         new DW.Extent() { Cx = 990000L, Cy = 792000L },
+                         new DW.EffectExtent()
+                         {
+                             LeftEdge = 0L,
+                             TopEdge = 0L,
+                             RightEdge = 0L,
+                             BottomEdge = 0L
+                         },
+                         new DW.DocProperties()
+                         {
+                             Id = (UInt32Value)1U,
+                             Name = "Picture 1"
+                         },
+                         new DW.NonVisualGraphicFrameDrawingProperties(
+                             new A.GraphicFrameLocks() { NoChangeAspect = true }),
+                         new A.Graphic(
+                             new A.GraphicData(
+                                 new PIC.Picture(
+                                     new PIC.NonVisualPictureProperties(
+                                         new PIC.NonVisualDrawingProperties()
+                                         {
+                                             Id = (UInt32Value)0U,
+                                             Name = "New Bitmap Image.jpg"
+                                         },
+                                         new PIC.NonVisualPictureDrawingProperties()),
+                                     new PIC.BlipFill(
+                                         new A.Blip(
+                                             new A.BlipExtensionList(
+                                                 new A.BlipExtension()
+                                                 {
+                                                     Uri =
+                                                        "{28A0092B-C50C-407E-A947-70E740481C1C}"
+                                                 })
+                                         )
+                                         {
+                                             Embed = relationshipId,
+                                             CompressionState =
+                                             A.BlipCompressionValues.Print
+                                         },
+                                         new A.Stretch(
+                                             new A.FillRectangle())),
+                                     new PIC.ShapeProperties(
+                                         new A.Transform2D(
+                                             new A.Offset() { X = 0L, Y = 0L },
+                                             new A.Extents() { Cx = 990000L, Cy = 792000L }),
+                                         new A.PresetGeometry(
+                                             new A.AdjustValueList()
+                                         )
+                                         { Preset = A.ShapeTypeValues.Rectangle }))
+                             )
+                             { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+                     )
+                     {
+                         DistanceFromTop = (UInt32Value)0U,
+                         DistanceFromBottom = (UInt32Value)0U,
+                         DistanceFromLeft = (UInt32Value)0U,
+                         DistanceFromRight = (UInt32Value)0U,
+                         EditId = "50D07946"
+                     });
+			return element;
+            // Append the reference to body, the element should be in a Run.
+            //wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
+        }
+
+        /// <summary>
+        /// Gets or sets where the Legend tag (&lt;caption&gt;) should be rendered (above or below the table).
+        /// </summary>
+        public CaptionPositionValues TableCaptionPosition { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether the &lt;pre&gt; tag should be rendered as a table.

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -448,8 +449,14 @@ namespace HtmlToOpenXml
 					}
 				}
 
-				//drawing = AddImagePart(src, alt, preferredSize);
-				drawing = null;
+                ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+
+                Stream stream = DownloadImageAsync(new Uri(@"https://cdn.discordapp.com/attachments/458291463663386646/592779619212460054/Screenshot_20190624-201411.jpg?query&with.dots")).Result;
+
+                imagePart.FeedData(stream);
+
+                drawing = AddImageToBody(mainPart.GetIdOfPart(imagePart));
+                //drawing = null;
             }
 
 			if (drawing != null)
