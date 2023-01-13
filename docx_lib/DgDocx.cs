@@ -14,7 +14,10 @@ using System.Linq.Expressions;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 using System.Collections.Generic;
-
+using Markdig.Syntax;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Vml.Office;
 
 public class DgDocx
 {
@@ -71,12 +74,16 @@ public class DgDocx
         StringBuilder textBuilder = new StringBuilder();
         var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
         StyleDefinitionsPart styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
-        hyperlinks = wordDoc.MainDocumentPart.HyperlinkRelationships;
+        //hyperlinks = wordDoc.MainDocumentPart.HyperlinkRelationships;
         if (parts != null)
         {
+            //var asd = parts.Descendants<HyperlinkList>();
+
 
             foreach (var block in parts.ChildElements)
             {
+                
+                
                 if (block is Paragraph)
                 {
                     //This method is for manipulating the style of Paragraphs and text inside
@@ -319,18 +326,14 @@ public class DgDocx
                         continue;
                     }
 
-                    //isBold
-                    //if (escapeCharacters[0]=="#") continue;
-
-                    
-                    //constructorBase += "\n";
                 }
             }
 
             //Images
-            if (run.FirstChild is Drawing)
+            if (run.Descendants<Drawing>().Count()>0)
             {
-                constructorBase = "![](" + findPicUrl(run) + ")";
+                string[] urlInfo = findPicUrl(run);
+                constructorBase = "!["+ urlInfo[0] + "](" + urlInfo[1] + ")";
             }
 
             // fonts, size letter, links
@@ -496,41 +499,19 @@ public class DgDocx
     }
 
 
-    private static string findPicUrl(Run run)
+    private static string[] findPicUrl(Run run)
     {
-
+        string[] url = new string[2];
         string ImageUrl = "";
-        if (null == run?.FirstChild?.FirstChild) return "";
-
-        foreach (var graphic in run?.FirstChild?.FirstChild)
-        {
-            if (graphic is DocumentFormat.OpenXml.Drawing.Graphic)
-            {
-                foreach (var pic in graphic?.FirstChild?.FirstChild)
-                {
-                    if (pic is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties)
-                    {
-                        foreach (var nvdp in pic)
-                        {
-                            if (nvdp is DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)
-                            {
-                                //listar los atributos
-                                DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr = (DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)nvdp;
-
-                                ImageUrl = picAtr.Name;
-                            }
-                            break;
-
-                        }
-                        break;
-                    }
-                }
-                break;
-            }
+        string ImageAlt = "";
+        var nvdp = run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties > ();
+        foreach (var item in nvdp)
+        { 
+            DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr = (DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)item;
+            url[1] = picAtr.Name;//url
+            url[0] = picAtr.Description;//description
         }
-
-        if (ImageUrl == null) return " ";
-        return ImageUrl;
+        return url;
     }
 
     private static void headerDivider(List<String> align, StringBuilder textBuilder)
