@@ -461,7 +461,7 @@ namespace HtmlToOpenXml
                 info.Size = ImageHeader.GetDimensions(stream);
 
 
-				drawing = AddImageToBody(mainPart.GetIdOfPart(imagePart), info.Size, preferredSize, mainPart,info.ImagePartId);
+				drawing = AddImageToBody(mainPart.GetIdOfPart(imagePart), info.Size, preferredSize, mainPart,info.ImagePartId,alt);
             }
 
 			if (drawing != null)
