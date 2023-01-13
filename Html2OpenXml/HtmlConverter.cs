@@ -46,7 +46,6 @@ namespace HtmlToOpenXml
         private Paragraph currentParagraph;
         private Int32 footnotesRef = 1, endnotesRef = 1, figCaptionRef = -1;
         private Dictionary<String, Action<HtmlEnumerator>> knownTags;
-        private ImagePrefetcher imagePrefetcher;
         private TableContext tables;
         private readonly HtmlDocumentStyle htmlStyles;
         public static uint drawingObjId, imageObjId;
