@@ -484,7 +484,7 @@ namespace HtmlToOpenXml
 
         #endregion
 
-       
+
 
         #region InitKnownTags
 
@@ -749,12 +749,18 @@ namespace HtmlToOpenXml
 
         public static async Task<Stream> DownloadImageAsync(Uri uri)
         {
-            var httpClient = new HttpClient();
+            using (var httpClient = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, uri);
+                request.Headers.Add("sec-fetch-mode", "no-cors");
 
-            // Download the image and write to the file\
-            var imageBytes = await httpClient.GetByteArrayAsync(uri);
-            Stream stream = new MemoryStream(imageBytes);
-            return stream;
+                var result = await httpClient.SendAsync(request);
+
+                Stream stream = await result.Content.ReadAsStreamAsync();
+                
+                return stream;
+            }
+
         }
         public static async Task InsertAPicture(string filepath, string url)
         {
