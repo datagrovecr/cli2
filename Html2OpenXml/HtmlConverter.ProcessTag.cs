@@ -19,8 +19,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using HtmlToOpenXml.IO;
 using w14 = DocumentFormat.OpenXml.Office2010.Word;
 
 namespace HtmlToOpenXml
@@ -413,7 +415,7 @@ namespace HtmlToOpenXml
 			// To circumvent this buffer size, we will work either on the Uri, either on the original src.
 			if (src != null && (IO.DataUri.IsWellFormed(src) || Uri.TryCreate(src, UriKind.RelativeOrAbsolute, out uri)))
 			{
-				string alt = (en.Attributes["title"] ?? en.Attributes["alt"]) ?? String.Empty;
+				string alt = (en.Attributes["title"] ?? en.Attributes["alt"]) ?? String.Empty; // NAME OF THE IMAGE DO IT LATER
 
 				Size preferredSize = Size.Empty;
 				Unit wu = en.Attributes.GetAsUnit("width");
@@ -450,13 +452,16 @@ namespace HtmlToOpenXml
 				}
 
                 ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
-
-                Stream stream = DownloadImageAsync(new Uri(@"https://cdn.discordapp.com/attachments/458291463663386646/592779619212460054/Screenshot_20190624-201411.jpg?query&with.dots")).Result;
-
+                
+				Stream stream = DownloadImageAsync(uri).Result;
                 imagePart.FeedData(stream);
 
-                drawing = AddImageToBody(mainPart.GetIdOfPart(imagePart));
-                //drawing = null;
+                HtmlImageInfo info = new HtmlImageInfo() { Source = src };
+                stream.Seek(0L, SeekOrigin.Begin);
+                info.Size = ImageHeader.GetDimensions(stream);
+
+
+				drawing = AddImageToBody(mainPart.GetIdOfPart(imagePart), info.Size, preferredSize, mainPart,info.ImagePartId);
             }
 
 			if (drawing != null)

@@ -49,7 +49,7 @@ namespace HtmlToOpenXml
         private ImagePrefetcher imagePrefetcher;
         private TableContext tables;
         private readonly HtmlDocumentStyle htmlStyles;
-        private uint drawingObjId, imageObjId;
+        public static uint drawingObjId, imageObjId;
 
 
 
@@ -820,22 +820,61 @@ namespace HtmlToOpenXml
         }
         public static async Task InsertAPicture(string filepath, string url)
         {
-                //ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
 
                 Stream stream = DownloadImageAsync(new Uri(url)).Result;
 
-                //imagePart.FeedData(stream);
-
-                //AddImageToBody(wordprocessingDocument, mainPart.GetIdOfPart(imagePart));
         }
 
-        public static Drawing AddImageToBody(string relationshipId)
+        public static Drawing AddImageToBody(string relationshipId, Size actualSize,Size preferredSize,MainDocumentPart mainPart, string ImagePartId)
         {
+
+
+
+
+            if (imageObjId == UInt32.MinValue)
+            {
+                // In order to add images in the document, we need to asisgn an unique id
+                // to each Drawing object. So we'll loop through all of the existing <wp:docPr> elements
+                // to find the largest Id, then increment it for each new image.
+
+                drawingObjId = 1; // 1 is the minimum ID set by MS Office.
+                imageObjId = 1;
+                foreach (var d in mainPart.Document.Body.Descendants<Drawing>())
+                {
+                    if (d.Inline == null) continue; // fix some rare issue where Inline is null (reported by scwebgroup)
+                    if (d.Inline.DocProperties.Id > drawingObjId) drawingObjId = d.Inline.DocProperties.Id;
+
+                    var nvPr = d.Inline.Graphic.GraphicData.GetFirstChild<pic.NonVisualPictureProperties>();
+                    if (nvPr != null && nvPr.NonVisualDrawingProperties.Id > imageObjId)
+                        imageObjId = nvPr.NonVisualDrawingProperties.Id;
+                }
+                if (drawingObjId > 1) drawingObjId++;
+                if (imageObjId > 1) imageObjId++;
+            }
+
+
+            if (preferredSize.IsEmpty)
+            {
+                preferredSize = actualSize;
+            }
+            else if (preferredSize.Width <= 0 || preferredSize.Height <= 0)
+            {
+                
+                preferredSize = ImageHeader.KeepAspectRatio(actualSize, preferredSize);
+            }
+           
+
             // Define the reference of the image.
+            long widthInEmus = new Unit(UnitMetric.Pixel, preferredSize.Width).ValueInEmus;
+            long heightInEmus = new Unit(UnitMetric.Pixel, preferredSize.Height).ValueInEmus;
+            ++drawingObjId;
+            ++imageObjId;
+
             var element =
                  new Drawing(
                      new DW.Inline(
-                         new DW.Extent() { Cx = 990000L, Cy = 792000L },
+                        // new DW.Extent() { Cx = 990000L, Cy = 792000L },
+                          new DW.Extent() { Cx = widthInEmus, Cy = heightInEmus },
                          new DW.EffectExtent()
                          {
                              LeftEdge = 0L,
@@ -857,7 +896,8 @@ namespace HtmlToOpenXml
                                          new PIC.NonVisualDrawingProperties()
                                          {
                                              Id = (UInt32Value)0U,
-                                             Name = "New Bitmap Image.jpg"
+                                             Name = "New Bitmap Image.jpg",
+                                             Description = "asdasd"
                                          },
                                          new PIC.NonVisualPictureDrawingProperties()),
                                      new PIC.BlipFill(
@@ -879,7 +919,9 @@ namespace HtmlToOpenXml
                                      new PIC.ShapeProperties(
                                          new A.Transform2D(
                                              new A.Offset() { X = 0L, Y = 0L },
-                                             new A.Extents() { Cx = 990000L, Cy = 792000L }),
+                                           //new A.Extents() { Cx = 990000L, Cy = 792000L }),
+                                         new A.Extents() { Cx = widthInEmus, Cy = heightInEmus }),
+
                                          new A.PresetGeometry(
                                              new A.AdjustValueList()
                                          )
@@ -894,7 +936,107 @@ namespace HtmlToOpenXml
                          DistanceFromRight = (UInt32Value)0U,
                          EditId = "50D07946"
                      });
-			return element;
+
+
+            //-----------------
+
+            /*
+
+
+            if (imageObjId == UInt32.MinValue)
+            {
+                // In order to add images in the document, we need to asisgn an unique id
+                // to each Drawing object. So we'll loop through all of the existing <wp:docPr> elements
+                // to find the largest Id, then increment it for each new image.
+
+                drawingObjId = 1; // 1 is the minimum ID set by MS Office.
+                imageObjId = 1;
+                foreach (var d in mainPart.Document.Body.Descendants<Drawing>())
+                {
+                    if (d.Inline == null) continue; // fix some rare issue where Inline is null (reported by scwebgroup)
+                    if (d.Inline.DocProperties.Id > drawingObjId) drawingObjId = d.Inline.DocProperties.Id;
+
+                    var nvPr = d.Inline.Graphic.GraphicData.GetFirstChild<pic.NonVisualPictureProperties>();
+                    if (nvPr != null && nvPr.NonVisualDrawingProperties.Id > imageObjId)
+                        imageObjId = nvPr.NonVisualDrawingProperties.Id;
+                }
+                if (drawingObjId > 1) drawingObjId++;
+                if (imageObjId > 1) imageObjId++;
+            }
+
+
+
+            HtmlImageInfo iinfo = new HtmlImageInfo().;
+
+            if (iinfo == null)
+                return null;
+
+            if (preferredSize.IsEmpty)
+            {
+                preferredSize = iinfo.Size;
+            }
+            else if (preferredSize.Width <= 0 || preferredSize.Height <= 0)
+            {
+                Size actualSize = iinfo.Size;
+                preferredSize = ImageHeader.KeepAspectRatio(actualSize, preferredSize);
+            } 
+			  ++drawingObjId;
+            ++imageObjId;
+
+			*/
+
+
+
+
+
+
+
+
+            #region MyRegion
+            var img = new Drawing(
+                new wp.Inline(
+                    new wp.Extent() { Cx = widthInEmus, Cy = heightInEmus },
+                    new wp.EffectExtent() { LeftEdge = 19050L, TopEdge = 0L, RightEdge = 0L, BottomEdge = 0L },
+                    new wp.DocProperties() { Id = drawingObjId, Name = "Picture " + imageObjId, Description = String.Empty },
+                    new wp.NonVisualGraphicFrameDrawingProperties
+                    {
+                        GraphicFrameLocks = new a.GraphicFrameLocks() { NoChangeAspect = true }
+                    },
+                    new a.Graphic(
+                        new a.GraphicData(
+                            new pic.Picture(
+                                new pic.NonVisualPictureProperties
+                                {
+                                    //NonVisualDrawingProperties = new pic.NonVisualDrawingProperties() { Id = imageObjId, Name = DataUri.IsWellFormed(imageSource) ? string.Empty : imageSource, Description = alt },
+                                    NonVisualDrawingProperties = new pic.NonVisualDrawingProperties() { Id = imageObjId, Name = "" },
+                                    NonVisualPictureDrawingProperties = new pic.NonVisualPictureDrawingProperties(
+                                        new a.PictureLocks() { NoChangeAspect = true, NoChangeArrowheads = true })
+                                },
+                                new pic.BlipFill(
+                                    new a.Blip() { Embed = ImagePartId },
+                                    new a.SourceRectangle(),
+                                    new a.Stretch(
+                                        new a.FillRectangle())),
+                                new pic.ShapeProperties(
+                                    new a.Transform2D(
+                                        new a.Offset() { X = 0L, Y = 0L },
+                                        new a.Extents() { Cx = widthInEmus, Cy = heightInEmus }),
+                                    new a.PresetGeometry(
+                                        new a.AdjustValueList()
+                                    )
+                                    { Preset = a.ShapeTypeValues.Rectangle }
+                                )
+                                { BlackWhiteMode = a.BlackWhiteModeValues.Auto })
+                        )
+                        { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+                )
+                { DistanceFromTop = (UInt32Value)0U, DistanceFromBottom = (UInt32Value)0U, DistanceFromLeft = (UInt32Value)0U, DistanceFromRight = (UInt32Value)0U }
+            );
+            #endregion
+
+
+
+            return element;
             // Append the reference to body, the element should be in a Run.
             //wordDoc.MainDocumentPart.Document.Body.AppendChild(new Paragraph(new Run(element)));
         }
