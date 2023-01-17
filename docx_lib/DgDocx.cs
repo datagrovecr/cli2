@@ -74,7 +74,6 @@ public class DgDocx
         StringBuilder textBuilder = new StringBuilder();
         var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
         StyleDefinitionsPart styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
-        //hyperlinks = wordDoc.MainDocumentPart.HyperlinkRelationships;
         if (parts != null)
         {
             //var asd = parts.Descendants<HyperlinkList>();
@@ -114,20 +113,6 @@ public class DgDocx
             writer.Flush();
         }
 
-        //commented code is for .zip files
-
-        //using (var archive = new ZipArchive(outfile, ZipArchiveMode.Create, true))
-        //{
-        //    var demoFile = archive.CreateEntry(name);
-        //    using (var entryStream = demoFile.Open())
-        //    {
-        //        using (var streamWriter = new StreamWriter(entryStream))
-        //        {
-        //            String s = textBuilder.ToString();
-        //            streamWriter.Write(s);
-        //        }
-        //    }
-        //}
     }
 
     private static void ProcessTable(Table node, StringBuilder textBuilder)
@@ -276,7 +261,8 @@ public class DgDocx
                             constructorBase += "\n";
                             constructorBase += ">" + text.InnerText; 
                             constructorBase += "\n"; 
-                            continue; }
+                            continue; 
+                        }
                         else
                         {
 
@@ -284,7 +270,6 @@ public class DgDocx
                             {
                                 constructorBase += "" + text.InnerText.Replace(escapeCharacters[0], escapeCharacters[1]);
                                 isEsc = true;
-                                //continue;
                             }
                             else
                             {
@@ -304,7 +289,9 @@ public class DgDocx
                     if (text.InnerText == "☒") { constructorBase = " [X]"; continue; }
 
 
-                    //Hyperlink
+                    /// 
+                    /// Hyperlink 
+                    /// 
                     if (links.Count() > 0 && links.Count() > linksCount)
                     {
                         var LId = links.ElementAt(linksCount).Id;
@@ -428,10 +415,11 @@ public class DgDocx
         string cbt = "";
         if (text is RunProperties)
         {   //get to runStyles
-            //make Ienumerable of  
-            if (text.FirstChild is RunStyle)
+
+            //var asd = text.Descendants<RunStyle>();
+            foreach(RunStyle runStyle in text.Descendants<RunStyle>())
             {
-                RunStyle runStyle = (RunStyle)text.FirstChild;
+                //RunStyle runStyle = (RunStyle)text.FirstChild;
                 if (runStyle.Val == "Hyperlink")
                 {
                     if (isEsc)
@@ -490,7 +478,7 @@ public class DgDocx
         {
             if (style is Shading) isShading = true;
 
-            if (style is ParagraphBorders) isLines = true;
+            if (style is ParagraphBorders  ) isLines = true;
 
             if (style is Indentation) isIndentation = true;
         }
@@ -502,12 +490,11 @@ public class DgDocx
     private static string[] findPicUrl(Run run)
     {
         string[] url = new string[2];
-        string ImageUrl = "";
-        string ImageAlt = "";
-        var nvdp = run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties > ();
-        foreach (var item in nvdp)
+        foreach (
+            DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr 
+            in 
+            run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties>())
         { 
-            DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr = (DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties)item;
             url[1] = picAtr.Name;//url
             url[0] = picAtr.Description;//description
         }

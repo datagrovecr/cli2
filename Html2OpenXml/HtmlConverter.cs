@@ -21,6 +21,7 @@ using HtmlToOpenXml.IO;
 using System.Net.Http;
 using System.IO;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace HtmlToOpenXml
 {
@@ -494,16 +495,16 @@ namespace HtmlToOpenXml
 
             var knownTags = new Dictionary<String, Action<HtmlEnumerator>>(StringComparer.OrdinalIgnoreCase) {
                 { "<a>", ProcessLink },
-                { "<abbr>", ProcessAcronym },
-                { "<acronym>", ProcessAcronym },
-                { "<article>", ProcessDiv },
+           //     { "<abbr>", ProcessAcronym },
+            //   { "<acronym>", ProcessAcronym },
+              //  { "<article>", ProcessDiv },
                 { "<aside>", ProcessDiv },
                 { "<b>", ProcessHtmlElement<Bold> },
                 { "<blockquote>", ProcessBlockQuote },
                 { "<body>", ProcessBody },
                 { "<br>", ProcessBr },
                 { "<caption>", ProcessTableCaption },
-                { "<cite>", ProcessCite },
+           //    { "<cite>", ProcessCite },
                 { "<del>", ProcessHtmlElement<Strike> },
                 { "<div>", ProcessDiv },
                 { "<dd>", ProcessDefinitionListItem },
@@ -531,7 +532,7 @@ namespace HtmlToOpenXml
                 { "<span>", ProcessSpan },
                 { "<section>", ProcessDiv },
                 { "<s>", ProcessHtmlElement<Strike> },
-                { "<strike>", ProcessHtmlElement<Strike> },
+              //{ "<strike>", ProcessHtmlElement<Strike> },
                 { "<strong>", ProcessHtmlElement<Bold> },
                 { "<sub>", ProcessSubscript },
                 { "<sup>", ProcessSuperscript },
@@ -544,16 +545,16 @@ namespace HtmlToOpenXml
                 { "<tr>", ProcessTableRow },
                 { "<u>", ProcessUnderline },
                 { "<ul>", ProcessNumberingList },
-                { "<xml>", ProcessXmlDataIsland },
+              //{ "<xml>", ProcessXmlDataIsland },
                 { "<input>", ProcessInput },
 
-				// closing tag
+			    // closing tag
 
-                { "</article>", ProcessClosingDiv },
+              //{ "</article>", ProcessClosingDiv },
                 { "</aside>", ProcessClosingDiv },
                 { "</b>", ProcessClosingTag },
                 { "</body>", ProcessClosingTag },
-                { "</cite>", ProcessClosingTag },
+              //{ "</cite>", ProcessClosingTag },
                 { "</del>", ProcessClosingTag },
                 { "</div>", ProcessClosingDiv },
                 { "</em>", ProcessClosingTag },
@@ -762,6 +763,7 @@ namespace HtmlToOpenXml
             }
 
         }
+
         public static async Task InsertAPicture(string filepath, string url)
         {
 
@@ -769,11 +771,8 @@ namespace HtmlToOpenXml
 
         }
 
-        public static Drawing AddImageToBody(string relationshipId, Size actualSize, Size preferredSize, MainDocumentPart mainPart, string ImagePartId, string alt)
+        public static Drawing AddImageToBody(string relationshipId, Size actualSize, Size preferredSize, MainDocumentPart mainPart, string ImagePartId, string alt,Uri uri)
         {
-
-
-
 
             if (imageObjId == UInt32.MinValue)
             {
@@ -800,6 +799,7 @@ namespace HtmlToOpenXml
             if (preferredSize.IsEmpty)
             {
                 preferredSize = actualSize;
+
             }
             else if (preferredSize.Width <= 0 || preferredSize.Height <= 0)
             {
@@ -813,9 +813,6 @@ namespace HtmlToOpenXml
             long heightInEmus = new Unit(UnitMetric.Pixel, preferredSize.Height).ValueInEmus;
             ++drawingObjId;
             ++imageObjId;
-
-            //long X = 6558280;
-            //long Y = 8607973;
 
             //keep the ratio adn the size inside of the document
             while (widthInEmus > 6558280 || heightInEmus > 8607973)
@@ -854,7 +851,7 @@ namespace HtmlToOpenXml
                                          {
                                              Id = imageObjId,
                                              //Id = (UInt32Value)0U,
-                                             Name = alt + ".jpg",
+                                             Name = uri.ToString(),
                                              Description = alt
                                          },
                                          new PIC.NonVisualPictureDrawingProperties()),
