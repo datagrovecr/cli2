@@ -11,7 +11,7 @@ internal class Program
     {
 
         var outdir = @"./../../../../docx_md/test_results/";
-        string[] files = Directory.GetFiles(@"./../../../../docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
+        string[] files = Directory.GetFiles(@"../docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
 
 
 

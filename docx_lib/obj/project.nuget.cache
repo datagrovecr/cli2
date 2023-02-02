@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "gYUwM+c/MKSdEzaJuT75RUQZrSJ0rpem9JXStpaprRnjcJEGAgZwWo+HQzawGokQXlO05eOI1LQYwrtqfU0KWQ==",
+  "dgSpecHash": "eIQxOYwmJAUEeXg8d2M/Zv7Nyu/hrznjRLjm9jijPmh95weGl4LCZ6wM2z3pWaTpqWV/tUQBMYTlff+5IL5s1A==",
   "success": true,
   "projectFilePath": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_lib/docx_lib.csproj",
   "expectedPackageFiles": [
-    "/Users/fabianvalverde/.nuget/packages/documentformat.openxml/2.15.0/documentformat.openxml.2.15.0.nupkg.sha512",
+    "/Users/fabianvalverde/.nuget/packages/documentformat.openxml/2.19.0/documentformat.openxml.2.19.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/markdig/0.30.4/markdig.0.30.4.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/microsoft.netcore.targets/1.1.0/microsoft.netcore.targets.1.1.0.nupkg.sha512",
@@ -22,8 +22,7 @@
     "/Users/fabianvalverde/.nuget/packages/system.runtime.extensions/4.3.0/system.runtime.extensions.4.3.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.text.encoding/4.3.0/system.text.encoding.4.3.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.threading/4.3.0/system.threading.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.threading.tasks/4.3.0/system.threading.tasks.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/htmltoopenxml.dll/2.3.0/htmltoopenxml.dll.2.3.0.nupkg.sha512"
+    "/Users/fabianvalverde/.nuget/packages/system.threading.tasks/4.3.0/system.threading.tasks.4.3.0.nupkg.sha512"
   ],
   "logs": []
 }

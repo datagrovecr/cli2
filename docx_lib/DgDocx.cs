@@ -64,6 +64,29 @@ public class DgDocx
         }
     }
 
+    public async static Task md_to_docx(String[] mdFiles, String images, Stream[] outputStream) //String mdFile, String docxFile, String template)
+    {
+        MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        for (int i = 0; i < mdFiles.Length; i++)
+        {
+            var html = Markdown.ToHtml(mdFiles[i], pipeline);
+            //edit on debug the h
+            //All the document is being saved in the stream
+            using (WordprocessingDocument doc = WordprocessingDocument.Create(outputStream[i], WordprocessingDocumentType.Document, true))
+            {
+                MainDocumentPart mainPart = doc.AddMainDocumentPart();
+
+                // Create the document structure and add some text.
+                mainPart.Document = new Document();
+
+
+                HtmlConverter converter = new HtmlConverter(mainPart);
+                converter.ParseHtml(html);
+                mainPart.Document.Save();
+            }
+        }
+    }
+
     public async static Task docx_to_md(Stream infile, Stream outfile, String name = "")
     {
         WordprocessingDocument wordDoc = WordprocessingDocument.Open(infile, false);
@@ -81,8 +104,8 @@ public class DgDocx
 
             foreach (var block in parts.ChildElements)
             {
-                
-                
+
+
                 if (block is Paragraph)
                 {
                     //This method is for manipulating the style of Paragraphs and text inside
@@ -257,11 +280,12 @@ public class DgDocx
                     if (text is Text)
                     {
                         escapeCharacters = ContainsEscape(text.InnerText);
-                        if (isBlockQuote(block?.ParagraphProperties)) {
+                        if (isBlockQuote(block?.ParagraphProperties))
+                        {
                             constructorBase += "\n";
-                            constructorBase += ">" + text.InnerText; 
-                            constructorBase += "\n"; 
-                            continue; 
+                            constructorBase += ">" + text.InnerText;
+                            constructorBase += "\n";
+                            continue;
                         }
                         else
                         {
@@ -317,10 +341,10 @@ public class DgDocx
             }
 
             //Images
-            if (run.Descendants<Drawing>().Count()>0)
+            if (run.Descendants<Drawing>().Count() > 0)
             {
                 string[] urlInfo = findPicUrl(run);
-                constructorBase = "!["+ urlInfo[0] + "](" + urlInfo[1] + ")";
+                constructorBase = "![" + urlInfo[0] + "](" + urlInfo[1] + ")";
             }
 
             // fonts, size letter, links
@@ -369,34 +393,39 @@ public class DgDocx
 
     private static string[] ContainsEscape(string InnerText)
     {
-        string[] result =new string[2];
+        string[] result = new string[2];
         if (InnerText.Contains("#"))
         {
             result[0] = "#";
             result[1] = "\\#";
             return result;
         }
-        else if (InnerText.Contains("-")) {
+        else if (InnerText.Contains("-"))
+        {
             result[0] = "#";
             result[1] = "\\#";
             return result;
         }
-        else if (InnerText.Contains(">")) {
+        else if (InnerText.Contains(">"))
+        {
             result[0] = ">";
             result[1] = "\\>";
             return result;
         }
-        else if (InnerText.Contains("[")) {
+        else if (InnerText.Contains("["))
+        {
             result[0] = "[";
             result[1] = "\\[";
             return result;
         }
-        else if (InnerText.Contains("![")) {
+        else if (InnerText.Contains("!["))
+        {
             result[0] = "![";
             result[1] = "\\!\\[";
             return result;
         }
-        else if (InnerText.Contains("*")) {
+        else if (InnerText.Contains("*"))
+        {
             result[0] = "![";
             result[1] = "\\!\\[";
             return result;
@@ -407,7 +436,7 @@ public class DgDocx
             result[1] = "";
             return result;
         }
-        
+
     }
 
     private static string buildHyperLink(OpenXmlElement text, string id = "", bool isEsc = false) //STRING LITERAL OR OPTIONAL
@@ -417,7 +446,7 @@ public class DgDocx
         {   //get to runStyles
 
             //var asd = text.Descendants<RunStyle>();
-            foreach(RunStyle runStyle in text.Descendants<RunStyle>())
+            foreach (RunStyle runStyle in text.Descendants<RunStyle>())
             {
                 //RunStyle runStyle = (RunStyle)text.FirstChild;
                 if (runStyle.Val == "Hyperlink")
@@ -478,7 +507,7 @@ public class DgDocx
         {
             if (style is Shading) isShading = true;
 
-            if (style is ParagraphBorders  ) isLines = true;
+            if (style is ParagraphBorders) isLines = true;
 
             if (style is Indentation) isIndentation = true;
         }
@@ -491,10 +520,10 @@ public class DgDocx
     {
         string[] url = new string[2];
         foreach (
-            DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr 
-            in 
+            DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr
+            in
             run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties>())
-        { 
+        {
             url[1] = picAtr.Name;//url
             url[0] = picAtr.Description;//description
         }
