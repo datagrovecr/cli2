@@ -43,7 +43,7 @@ public class DgDocx
     }
 
     // stream here because anticipating zip.
-    public async static Task md_to_docx(String md, Stream outputStream) //String mdFile, String docxFile, String template)
+    public async static Task md_to_docx(string md, Stream outputStream) //String mdFile, String docxFile, String template)
     {
         MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
@@ -64,7 +64,7 @@ public class DgDocx
         }
     }
 
-    public async static Task md_to_docx(String[] mdFiles, String images, Stream[] outputStream) //String mdFile, String docxFile, String template)
+    public async static Task md_to_docx(string[] mdFiles, string images, Stream[] outputStream) //String mdFile, String docxFile, String template)
     {
         MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
         for (int i = 0; i < mdFiles.Length; i++)
@@ -72,13 +72,12 @@ public class DgDocx
             var html = Markdown.ToHtml(mdFiles[i], pipeline);
             //edit on debug the h
             //All the document is being saved in the stream
-            using (WordprocessingDocument doc = WordprocessingDocument.Create(outputStream[i], WordprocessingDocumentType.Document, true))
+            using (WordprocessingDocument doc = WordprocessingDocument.Create(outputStream[i] = new MemoryStream(), WordprocessingDocumentType.Document, true))
             {
                 MainDocumentPart mainPart = doc.AddMainDocumentPart();
 
                 // Create the document structure and add some text.
                 mainPart.Document = new Document();
-
 
                 HtmlConverter converter = new HtmlConverter(mainPart);
                 converter.ParseHtml(html);
@@ -87,7 +86,7 @@ public class DgDocx
         }
     }
 
-    public async static Task docx_to_md(Stream infile, Stream outfile, String name = "")
+    public async static Task docx_to_md(Stream infile, Stream outfile, string name = "")
     {
         WordprocessingDocument wordDoc = WordprocessingDocument.Open(infile, false);
         DocumentFormat.OpenXml.Wordprocessing.Body body
@@ -123,7 +122,7 @@ public class DgDocx
         {
             using (var streamWriter = new StreamWriter(name + ".md"))
             {
-                String s = textBuilder.ToString();
+                string s = textBuilder.ToString();
                 streamWriter.Write(s);
             }
         }
@@ -131,7 +130,7 @@ public class DgDocx
         {
 
             var writer = new StreamWriter(outfile);
-            String s = textBuilder.ToString();
+            string s = textBuilder.ToString();
             writer.Write(s);
             writer.Flush();
         }
@@ -173,9 +172,9 @@ public class DgDocx
         }
     }
 
-    private static String ProcessParagraphElements(Paragraph block)
+    private static string ProcessParagraphElements(Paragraph block)
     {
-        String style = block.ParagraphProperties?.ParagraphStyleId?.Val;
+        string style = block.ParagraphProperties?.ParagraphStyleId?.Val;
 
         if (style == null)
         {
@@ -184,7 +183,7 @@ public class DgDocx
         }
 
         int num;
-        String prefix = "";
+        string prefix = "";
         if ("top" == block.ParagraphProperties?.ParagraphBorders?.TopBorder?.LocalName
             && null == block.ParagraphProperties?.ParagraphBorders?.BottomBorder
             && null == block.ParagraphProperties?.ParagraphBorders?.LeftBorder)
@@ -221,12 +220,12 @@ public class DgDocx
         return prefix;
     }
 
-    private static String ProcessRunElements(Run run)
+    private static string ProcessRunElements(Run run)
     {
         //extract the child element of the text (Bold or Italic)
         OpenXmlElement expression = run.RunProperties.ChildElements.ElementAtOrDefault(0);
 
-        String prefix = "";
+        string prefix = "";
 
         //to know if the propertie is Bold, Italic or both
         switch (expression)
@@ -246,13 +245,13 @@ public class DgDocx
         return prefix;
     }
 
-    private static String ProcessBlockQuote(Run block)
+    private static string ProcessBlockQuote(Run block)
     {
-        String text = block.InnerText;
-        String[] textSliced = text.Split("\n");
-        String textBack = "";
+        string text = block.InnerText;
+        string[] textSliced = text.Split("\n");
+        string textBack = "";
 
-        foreach (String n in textSliced)
+        foreach (string n in textSliced)
         {
             textBack += "> " + n + "\n";
         }
@@ -262,13 +261,13 @@ public class DgDocx
 
     private static void ProcessParagraph(Paragraph block, StringBuilder textBuilder)
     {
-        String constructorBase = "";
+        string constructorBase = "";
         bool isEsc = false; //is an escape url
 
         //iterate along every element in the Paragraphs and childrens
         foreach (var run in block.Descendants<Run>())
         {
-            String prefix = "";
+            string prefix = "";
             var links = block.Descendants<Hyperlink>();
             if (run.InnerText != "")
             {
