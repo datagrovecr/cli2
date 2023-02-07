@@ -178,6 +178,10 @@
               "version": "[1.6.1, )",
               "autoReferenced": true
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.2, )"
+            },
             "System.Diagnostics.TraceSource": {
               "target": "Package",
               "version": "[4.3.0, )"
