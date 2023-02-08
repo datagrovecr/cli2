@@ -11,7 +11,8 @@ internal class Program
     {
 
         var outdir = @"./../../../../docx_md/test_results/";
-        string[] files = Directory.GetFiles(@"../docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
+        var outdirMedia = @"./../../../../docx_md/test_results/results/media/";
+        string[] files = Directory.GetFiles(@"./../../../../docx_md/folder_tests/", "*.md", SearchOption.TopDirectoryOnly);
 
 
 
@@ -45,6 +46,28 @@ internal class Program
                     //    outstream.Seek(0, SeekOrigin.Begin);
                     //    outstream.CopyTo(fileStream);
                     //}                        
+
+                    //pull the images from "/media"
+                    using (ZipArchive archive = new ZipArchive(instream, ZipArchiveMode.Update, true))
+                    {
+                        string subDirectory = "media/";
+                        // Loop through each entry in the zip file
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            // Check if the entry is a directory and its name matches the specified subdirectory
+                            if (entry.FullName.Contains(subDirectory) && !entry.Name.EndsWith("/"))
+                            {
+                                Directory.CreateDirectory(outdirMedia);
+                                // Extract the entry to the specified extract path
+                                entry.ExtractToFile(outdirMedia + entry.Name.Replace(".bin",".jpeg"), true);
+
+
+
+                            }
+                        }
+
+                    }
+
                 }
                 using (ZipArchive archive = ZipFile.OpenRead(outdir + "test.docx"))
                 {
