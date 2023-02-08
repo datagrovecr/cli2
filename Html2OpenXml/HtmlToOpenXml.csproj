@@ -1,14 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard1.3;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">netstandard1.3;netstandard2.0;net46</TargetFrameworks>
+    <TargetFramework>net7.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyName>HtmlToOpenXml</AssemblyName>
     <RootNamespace>HtmlToOpenXml</RootNamespace>
     <PackageId>HtmlToOpenXml.dll</PackageId>
     <Version>2.3.0</Version>
-    <PackageIcon>icon.png</PackageIcon>
     <Copyright>Copyright 2009-$([System.DateTime]::Now.Year) Olivier Nizet</Copyright>
     <PackageReleaseNotes>See changelog https://github.com/onizet/html2openxml/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>office openxml netcore html</PackageTags>

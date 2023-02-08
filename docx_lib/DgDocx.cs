@@ -80,7 +80,7 @@ public class DgDocx
                 mainPart.Document = new Document();
 
                 HtmlConverter converter = new HtmlConverter(mainPart);
-                converter.ParseHtml(html);
+                converter.ParseHtml(html, images);
                 mainPart.Document.Save();
             }
         }

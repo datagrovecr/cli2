@@ -1,28 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "G+jkt7HeyaeHUqLvRUzjLJtkhWsZFrYWDLo3UhNpyobKFqKbWrZjX4+wGL7sONfqG4ggNFf4T8x3MOQy39F9nQ==",
+  "dgSpecHash": "zvxFA1d/5iOTwdl/PMcNRpgFojwS72BEPgm8ueyCO0Q+gT0e2dAXPPbpzHBuWsqRL3GoeTDG/BoVMYZF4/svUg==",
   "success": true,
   "projectFilePath": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_md/docx_md.csproj",
   "expectedPackageFiles": [
     "/Users/fabianvalverde/.nuget/packages/documentformat.openxml/2.19.0/documentformat.openxml.2.19.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/markdig/0.30.4/markdig.0.30.4.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/microsoft.netcore.targets/1.1.0/microsoft.netcore.targets.1.1.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/runtime.native.system/4.3.0/runtime.native.system.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.collections/4.3.0/system.collections.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.diagnostics.debug/4.3.0/system.diagnostics.debug.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.diagnostics.tracesource/4.3.0/system.diagnostics.tracesource.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.globalization/4.3.0/system.globalization.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.io/4.3.0/system.io.4.3.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.io.packaging/4.7.0/system.io.packaging.4.7.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.reflection/4.3.0/system.reflection.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.reflection.primitives/4.3.0/system.reflection.primitives.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.resources.resourcemanager/4.3.0/system.resources.resourcemanager.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.runtime/4.3.0/system.runtime.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.runtime.extensions/4.3.0/system.runtime.extensions.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.text.encoding/4.3.0/system.text.encoding.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.threading/4.3.0/system.threading.4.3.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.threading.tasks/4.3.0/system.threading.tasks.4.3.0.nupkg.sha512"
+    "/Users/fabianvalverde/.nuget/packages/system.text.encodings.web/7.0.0/system.text.encodings.web.7.0.0.nupkg.sha512",
+    "/Users/fabianvalverde/.nuget/packages/system.text.json/7.0.1/system.text.json.7.0.1.nupkg.sha512"
   ],
   "logs": []
 }

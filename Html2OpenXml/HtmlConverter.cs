@@ -25,6 +25,7 @@ using DocumentFormat.OpenXml.Bibliography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+
 namespace HtmlToOpenXml
 {
     using A = DocumentFormat.OpenXml.Drawing;
@@ -127,13 +128,13 @@ namespace HtmlToOpenXml
         /// <summary>
 		/// Start the parse processing and append the converted paragraphs into the Body of the document.
 		/// </summary>
-        public void ParseHtml(String html, string imagesJson = null)
+        public void ParseHtml(String html, string imagesJson = "")
         {
             // This method exists because we may ensure the SectionProperties remains the last element of the body.
             // It's mandatory when dealing with page orientation
 
-            if(imagesJson != null){
-                storedImages  = JsonConvert.DeserializeObject<List<Images>>(imagesJson);
+            if(imagesJson != ""){
+                storedImages = JsonSerializer.Deserialize<List<Images>>(imagesJson);
             }
 
             var paragraphs = Parse(html);
