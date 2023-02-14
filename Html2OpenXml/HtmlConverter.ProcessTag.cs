@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml;
@@ -458,14 +459,23 @@ namespace HtmlToOpenXml
 
                 Stream imageStream;
                 ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
-				Console.WriteLine(src);
+                Console.WriteLine(src);
+                Console.WriteLine(storedImages[0].src);
 
                 try
                 {
-                    string image = storedImages.Where(x => "../" + x.src == src).FirstOrDefault().hex;
+                    string image = storedImages.Where(x => x.src == "images/" + src).FirstOrDefault().hex;
                     if (image != null)
                     {
-                        byte[] bytes = Convert.FromHexString(image);
+                        if (image.Length % 2 != 0)
+                        {
+                            image = "0" + image;
+                        }
+                        byte[] bytes = Enumerable.Range(0, image.Length)
+                                        .Where(x => x % 2 == 0)
+                                        .Select(x => Convert.ToByte(image.Substring(x, 2), 16))
+                                        .ToArray();
+                        //byte[] bytes = Encoding.UTF8.GetBytes(image);
                         imageStream = new MemoryStream(bytes);
                     }
                     else
@@ -473,12 +483,12 @@ namespace HtmlToOpenXml
                         throw new Exception("Image wasn't found");
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-					Console.WriteLine(ex);
+                    Console.WriteLine(ex);
 
                     byte[] imageBytes = File.ReadAllBytes(@"./Html2OpenXml/IO/noImageAvailable.jpg");
-                    
+
                     imageStream = new MemoryStream(imageBytes);
                 }
 
