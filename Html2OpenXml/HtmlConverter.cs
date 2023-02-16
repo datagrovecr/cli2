@@ -807,11 +807,10 @@ namespace HtmlToOpenXml
             if (preferredSize.IsEmpty)
             {
                 preferredSize = actualSize;
-
             }
+            
             else if (preferredSize.Width <= 0 || preferredSize.Height <= 0)
             {
-
                 preferredSize = ImageHeader.KeepAspectRatio(actualSize, preferredSize);
             }
 
@@ -822,7 +821,7 @@ namespace HtmlToOpenXml
             ++drawingObjId;
             ++imageObjId;
 
-            //keep the ratio adn the size inside of the document
+            //keep the ratio and the size inside of the document
             while (widthInEmus > 6558280 || heightInEmus > 8607973)
             {
                 Decimal Percentage = 0.9M;
