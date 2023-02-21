@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fxLt3WQBy36qr5ShgycpUa1At1sH6RK1ofLolFf8V6fw7TrM5i5YvZi41TYNUX04QrvoFx1XpGsMNoVPfI3ttw==",
+  "dgSpecHash": "TIVO/DYOiWpVl+4XMQBP6yQFs0DIF9oCkbm5W2oZYbf0GdCcR4qFK2rtQEDz+GwgW52FH9DNYqS9cV+yrEEN8Q==",
   "success": true,
   "projectFilePath": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/docx_web.csproj",
   "expectedPackageFiles": [
@@ -30,7 +30,8 @@
     "/Users/fabianvalverde/.nuget/packages/microsoft.jsinterop.webassembly/7.0.0/microsoft.jsinterop.webassembly.7.0.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.io.pipelines/7.0.0/system.io.pipelines.7.0.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.text.encodings.web/7.0.0/system.text.encodings.web.7.0.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512"
+    "/Users/fabianvalverde/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512",
+    "/Users/fabianvalverde/.nuget/packages/microsoft.netcore.app.runtime.mono.browser-wasm/7.0.3/microsoft.netcore.app.runtime.mono.browser-wasm.7.0.3.nupkg.sha512"
   ],
   "logs": []
 }

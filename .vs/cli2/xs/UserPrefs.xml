@@ -1,26 +1,29 @@
-﻿<Properties StartupConfiguration="{6680E411-7050-4FE2-B9F3-92AD5BC48260}|Default">
+﻿<Properties StartupConfiguration="{64620FAF-6553-4FB0-9609-4B073E8C9027}|Default">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/fabianvalverde/Documents/GitHub/cli2/docx_lib/DgDocx.cs" relfile="docx_lib/DgDocx.cs" line="185" column="1" />
       <Breakpoint file="/Users/fabianvalverde/Documents/GitHub/cli2/docx_lib/DgDocx.cs" relfile="docx_lib/DgDocx.cs" line="40" column="1" />
+      <Breakpoint file="/Users/fabianvalverde/Documents/GitHub/cli2/docx_lib/DgDocx.cs" relfile="docx_lib/DgDocx.cs" line="96" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.docx__md PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.docx__web PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workbench ActiveDocument="docx_lib/DgDocx.cs">
     <Files>
-      <File FileName="docx_md/Program.cs" Line="36" Column="1" />
-      <File FileName="docx_lib/DgDocx.cs" Line="40" Column="1" />
+      <File FileName="docx_md/Program.cs" Line="33" Column="19" />
+      <File FileName="docx_lib/DgDocx.cs" Line="379" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="cli2" expanded="True">
-            <Node name="docx_lib" expanded="True">
-              <Node name="DgDocx.cs" selected="True" />
-            </Node>
+            <Node name="docx_lib" expanded="True" />
             <Node name="docx_md" expanded="True">
               <Node name="folder_tests" expanded="True" />
+              <Node name="test_results" expanded="True" />
             </Node>
             <Node name="docx_web" expanded="True">
               <Node name="Pages" expanded="True" />
@@ -28,12 +31,6 @@
           </Node>
         </State>
       </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.docx__md PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.ItemProperties.docx__web PreferredExecutionTarget="/Applications/Google Chrome.app" />
 </Properties>

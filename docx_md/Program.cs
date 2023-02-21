@@ -25,12 +25,12 @@ internal class Program
             try
             {
                 // markdown to docx
-                var md = File.ReadAllText(mdFile);
-                var inputStream = new MemoryStream();
-                await DgDocx.md_to_docx(md, inputStream);
+                //var md = File.ReadAllText(mdFile);
+                //var inputStream = new MemoryStream();
+                //await DgDocx.md_to_docx(md, inputStream);
 
                 //inputStream is writing into the .docx file
-                File.WriteAllBytes(docxFile, inputStream.ToArray());
+                //File.WriteAllBytes(docxFile, inputStream.ToArray());
 
 
                 // convert the docx back to markdown.

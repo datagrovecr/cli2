@@ -15,7 +15,8 @@ using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 using System.Collections.Generic;
 using Markdig.Syntax;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using draw = DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Vml.Office;
 
@@ -96,6 +97,7 @@ public class DgDocx
         StringBuilder textBuilder = new StringBuilder();
         var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
         StyleDefinitionsPart styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
+
         if (parts != null)
         {
             //var asd = parts.Descendants<HyperlinkList>();
@@ -103,16 +105,10 @@ public class DgDocx
 
             foreach (var block in parts.ChildElements)
             {
-
-
-                if (block is Paragraph)
-                {
-                    //This method is for manipulating the style of Paragraphs and text inside
-                    ProcessParagraph((Paragraph)block, textBuilder);
-                }
+                //This method is for manipulating the style of Paragraphs and text inside
+                if (block is Paragraph) ProcessParagraph((Paragraph)block, textBuilder);
 
                 if (block is Table) ProcessTable((Table)block, textBuilder);
-
             }
         }
 
@@ -344,6 +340,9 @@ public class DgDocx
             {
                 string[] urlInfo = findPicUrl(run);
                 constructorBase = "![" + urlInfo[0] + "](" + urlInfo[1] + ")";
+
+                var url = block.Parent.Parent;//Getting the document and missing the mainDocumentPart
+
             }
 
             // fonts, size letter, links
@@ -517,15 +516,13 @@ public class DgDocx
 
     private static string[] findPicUrl(Run run)
     {
-        string[] url = new string[2];
-        foreach (
-            DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties picAtr
-            in
-            run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties>())
-        {
-            url[1] = picAtr.Name;//url
-            url[0] = picAtr.Description;//description
-        }
+        var docPr = run.Descendants<DocProperties>().First();
+        var blip = run.Descendants<draw.Blip>().First();
+
+        string[] url = new string[3];
+            url[2] = blip.Embed.Value;
+            url[1] = docPr.Name;//url
+            url[0] = docPr.Description;//description
         return url;
     }
 
