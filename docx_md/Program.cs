@@ -60,9 +60,6 @@ internal class Program
                                 Directory.CreateDirectory(outdirMedia);
                                 // Extract the entry to the specified extract path
                                 entry.ExtractToFile(outdirMedia + entry.Name.Replace(".bin",".jpeg"), true);
-
-
-
                             }
                         }
 

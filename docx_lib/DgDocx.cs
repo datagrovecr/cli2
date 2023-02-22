@@ -95,15 +95,13 @@ public class DgDocx
 
 
         StringBuilder textBuilder = new StringBuilder();
-        var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
+        //var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
         StyleDefinitionsPart styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
 
-        if (parts != null)
+        if (body != null)
         {
             //var asd = parts.Descendants<HyperlinkList>();
-
-
-            foreach (var block in parts.ChildElements)
+            foreach (var block in body.ChildElements)
             {
                 //This method is for manipulating the style of Paragraphs and text inside
                 if (block is Paragraph) ProcessParagraph((Paragraph)block, textBuilder);
@@ -124,7 +122,6 @@ public class DgDocx
         }
         else
         {
-
             var writer = new StreamWriter(outfile);
             string s = textBuilder.ToString();
             writer.Write(s);
@@ -168,7 +165,7 @@ public class DgDocx
         }
     }
 
-    private static string ProcessParagraphElements(Paragraph block)
+    private static string ProcessTextFormat(Paragraph block)
     {
         string style = block.ParagraphProperties?.ParagraphStyleId?.Val;
 
@@ -184,15 +181,14 @@ public class DgDocx
             && null == block.ParagraphProperties?.ParagraphBorders?.BottomBorder
             && null == block.ParagraphProperties?.ParagraphBorders?.LeftBorder)
         {
-
             prefix += "---\n";
             return prefix;
         }
+
         //to find Heading Paragraphs
         if (style.Contains("Heading"))
         {
             num = int.Parse(style.Substring(style.Length - 1));
-
 
             for (int i = 0; i < num; i++)
             {
@@ -284,7 +280,6 @@ public class DgDocx
                         }
                         else
                         {
-
                             if (escapeCharacters[0] is not "")
                             {
                                 constructorBase += "" + text.InnerText.Replace(escapeCharacters[0], escapeCharacters[1]);
@@ -298,7 +293,6 @@ public class DgDocx
                             {
                                 continue;
                             }
-
                         }
                     }
 
@@ -322,9 +316,7 @@ public class DgDocx
                             linksCount++;
                             break; //this break prevents  duplication of hyperlink description
                         }
-
                     }
-
                     //code block
                     if (isCodeBlock(block?.ParagraphProperties))
                     {
@@ -341,11 +333,11 @@ public class DgDocx
                 string[] urlInfo = findPicUrl(run);
                 constructorBase = "![" + urlInfo[0] + "](" + urlInfo[1] + ")";
 
-                var url = block.Parent.Parent;//Getting the document and missing the mainDocumentPart
+                getImageRel(block, urlInfo[2]);
 
             }
 
-            // fonts, size letter, links
+            //fonts, size letter, links
             if (run.RunProperties != null)
             {
                 prefix = ProcessRunElements(run);
@@ -355,7 +347,7 @@ public class DgDocx
             //general style, lists, aligment, spacing
             if (block.ParagraphProperties != null)
             {
-                prefix = ProcessParagraphElements(block);
+                prefix = ProcessTextFormat(block);
 
                 if (prefix == null) prefix = "";
 
@@ -370,8 +362,6 @@ public class DgDocx
                 }
 
             }
-
-
             //linksCount = 0;
             textBuilder.Append(constructorBase);
             constructorBase = "";
@@ -379,9 +369,6 @@ public class DgDocx
         linksCount = 0;
         constructorBase = textBuilder.ToString();
         textBuilder.Clear();
-
-
-
 
         textBuilder.Append(constructorBase);
         //if code block
@@ -457,15 +444,10 @@ public class DgDocx
                     else
                     {
                         cbt = "[" + text.Parent.InnerText + "](" + hyperlinks.First(leenk => leenk.Id == id).Uri + ")";
-
-
                     }
                     return cbt;
                 }
-
             }
-
-
         }
         return "";
 
@@ -551,10 +533,16 @@ public class DgDocx
             }
         }
         textBuilder.AppendLine("");
-
     }
 
+    private static String getImageRel(Paragraph block, string rId){
+        Document Document = (Document)block.Parent.Parent;
+        var imagePart = Document.MainDocumentPart.GetPartById(rId);
 
+        string imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
+
+        return imageName;
+    }
 }
 
 
