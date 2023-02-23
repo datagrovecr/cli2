@@ -23,25 +23,11 @@ using DocumentFormat.OpenXml.Vml.Office;
 public class DgDocx
 {
     private static IEnumerable<HyperlinkRelationship> hyperlinks;
+    private static Dictionary<string, Stream> images;
+    private static WordprocessingDocument wordDoc;
+    private static MainDocumentPart mainPart;
+
     private static int linksCount = 0;
-    public static void createWordprocessingDocument(string filepath)
-    {
-        // Create a document by supplying the filepath. 
-        using (WordprocessingDocument wordDocument =
-            WordprocessingDocument.Create(filepath, WordprocessingDocumentType.Document))
-        {
-            // Add a main document part. 
-            MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-
-            // Create the document structure and add some text.
-            mainPart.Document = new Document();
-            Body body = mainPart.Document.AppendChild(new Body());
-            Paragraph para = body.AppendChild(new Paragraph());
-            Run run = para.AppendChild(new Run());
-            run.AppendChild(new Text("Create text in body - CreateWordprocessingDocument"));
-        }
-
-    }
 
     // stream here because anticipating zip.
     public async static Task md_to_docx(string md, Stream outputStream) //String mdFile, String docxFile, String template)
@@ -51,9 +37,9 @@ public class DgDocx
         var html = Markdown.ToHtml(md, pipeline);
         //edit on debug the h
         //All the document is being saved in the stream
-        using (WordprocessingDocument doc = WordprocessingDocument.Create(outputStream, WordprocessingDocumentType.Document, true))
+        using (wordDoc = WordprocessingDocument.Create(outputStream, WordprocessingDocumentType.Document, true))
         {
-            MainDocumentPart mainPart = doc.AddMainDocumentPart();
+            mainPart = wordDoc.AddMainDocumentPart();
 
             // Create the document structure and add some text.
             mainPart.Document = new Document();
@@ -73,9 +59,9 @@ public class DgDocx
             var html = Markdown.ToHtml(mdFiles[i], pipeline);
             //edit on debug the h
             //All the document is being saved in the stream
-            using (WordprocessingDocument doc = WordprocessingDocument.Create(outputStream[i] = new MemoryStream(), WordprocessingDocumentType.Document, true))
+            using (wordDoc = WordprocessingDocument.Create(outputStream[i] = new MemoryStream(), WordprocessingDocumentType.Document, true))
             {
-                MainDocumentPart mainPart = doc.AddMainDocumentPart();
+                mainPart = wordDoc.AddMainDocumentPart();
 
                 // Create the document structure and add some text.
                 mainPart.Document = new Document();
@@ -87,16 +73,17 @@ public class DgDocx
         }
     }
 
-    public async static Task docx_to_md(Stream infile, Stream outfile, string name = "")
+    public async static Task docx_to_md(Stream infile, Stream outfile, Dictionary<string, Stream> images, string name = "")
     {
-        WordprocessingDocument wordDoc = WordprocessingDocument.Open(infile, false);
-        DocumentFormat.OpenXml.Wordprocessing.Body body
-        = wordDoc.MainDocumentPart.Document.Body;
-
+        wordDoc = WordprocessingDocument.Open(infile, false);
+        mainPart = wordDoc.MainDocumentPart;
+        DgDocx.images = images;
 
         StringBuilder textBuilder = new StringBuilder();
         //var parts = wordDoc.MainDocumentPart.Document.Descendants().FirstOrDefault();
         StyleDefinitionsPart styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
+
+        Body body = mainPart.Document.Body;
 
         if (body != null)
         {
@@ -128,6 +115,132 @@ public class DgDocx
             writer.Flush();
         }
 
+    }
+
+    private static void ProcessParagraph(Paragraph block, StringBuilder textBuilder)
+    {
+        string constructorBase = "";
+        bool isEsc = false; //is an escape url
+
+        //iterate along every element in the Paragraphs and childrens
+        foreach (var run in block.Descendants<Run>())
+        {
+            string prefix = "";
+            var links = block.Descendants<Hyperlink>();
+            if (run.InnerText != "")
+            {
+                string[] escapeCharacters = new string[2];
+
+                foreach (var text in run)
+                {
+                    if (text is Text)
+                    {
+                        escapeCharacters = ContainsEscape(text.InnerText);
+                        if (isBlockQuote(block?.ParagraphProperties))
+                        {
+                            constructorBase += "\n";
+                            constructorBase += ">" + text.InnerText;
+                            constructorBase += "\n";
+                            continue;
+                        }
+                        else
+                        {
+                            if (escapeCharacters[0] is not "")
+                            {
+                                constructorBase += "" + text.InnerText.Replace(escapeCharacters[0], escapeCharacters[1]);
+                                isEsc = true;
+                            }
+                            else
+                            {
+                                constructorBase += text.InnerText;
+                            }
+                            if (text.InnerText == "/")
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (text is Break) { constructorBase += "\n"; continue; }
+                    //checkbox
+                    if (text.InnerText == "☐") { constructorBase = " [ ]"; continue; }
+                    if (text.InnerText == "☒") { constructorBase = " [X]"; continue; }
+
+                    /// Hyperlink
+                    if (links.Count() > 0 && links.Count() > linksCount)
+                    {
+                        var LId = links.ElementAt(linksCount).Id;
+                        var result = buildHyperLink(text, LId, isEsc);
+                        //is hyperlink
+                        if (result != "")
+                        {
+                            constructorBase += result;
+                            linksCount++;
+                            break; //this break prevents duplication of hyperlink description
+                        }
+                    }
+                    //code block
+                    if (isCodeBlock(block?.ParagraphProperties))
+                    {
+                        constructorBase = "~~~~\n" + constructorBase + "\n~~~~\n";
+                        continue;
+                    }
+                }
+            }
+
+            //Images
+            if (run.Descendants<Drawing>().Count() > 0)
+            {
+                string imageName;
+                string Description = run.Descendants<DocProperties>().First().Description;
+                string rId = run.Descendants<draw.Blip>().First().Embed.Value;
+
+                var imagePart = mainPart.GetPartById(rId);
+
+                imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
+
+                constructorBase = "![" + imageName + "](" + Description + ")";
+
+                images.Add(imageName, imagePart.GetStream());
+            }
+
+            //fonts, size letter, links
+            if (run.RunProperties != null)
+            {
+                prefix = ProcessBoldItalic(run);
+                constructorBase = prefix + constructorBase + prefix;
+            }
+
+            //general style, lists, aligment, spacing
+            if (block.ParagraphProperties != null)
+            {
+                prefix = ProcessParagraphFormats(block);
+
+                if (prefix == null) prefix = "";
+
+                if (prefix.Contains("#") || prefix.Contains("-"))
+                {
+                    constructorBase = prefix + " " + constructorBase;
+                }
+
+                if (prefix.Contains(">"))
+                {
+                    constructorBase = ProcessBlockQuote(run);
+                }
+
+            }
+            //linksCount = 0;
+            textBuilder.Append(constructorBase);
+            constructorBase = "";
+        }
+        linksCount = 0;
+        constructorBase = textBuilder.ToString();
+        textBuilder.Clear();
+
+        textBuilder.Append(constructorBase);
+        //if code block
+
+        textBuilder.Append("\n");
     }
 
     private static void ProcessTable(Table node, StringBuilder textBuilder)
@@ -165,7 +278,7 @@ public class DgDocx
         }
     }
 
-    private static string ProcessTextFormat(Paragraph block)
+    private static string ProcessParagraphFormats(Paragraph block)
     {
         string style = block.ParagraphProperties?.ParagraphStyleId?.Val;
 
@@ -212,7 +325,7 @@ public class DgDocx
         return prefix;
     }
 
-    private static string ProcessRunElements(Run run)
+    private static string ProcessBoldItalic(Run run)
     {
         //extract the child element of the text (Bold or Italic)
         OpenXmlElement expression = run.RunProperties.ChildElements.ElementAtOrDefault(0);
@@ -249,131 +362,6 @@ public class DgDocx
         }
 
         return textBack;
-    }
-
-    private static void ProcessParagraph(Paragraph block, StringBuilder textBuilder)
-    {
-        string constructorBase = "";
-        bool isEsc = false; //is an escape url
-
-        //iterate along every element in the Paragraphs and childrens
-        foreach (var run in block.Descendants<Run>())
-        {
-            string prefix = "";
-            var links = block.Descendants<Hyperlink>();
-            if (run.InnerText != "")
-            {
-                string[] escapeCharacters = new string[2];
-
-                foreach (var text in run)
-                {
-
-                    if (text is Text)
-                    {
-                        escapeCharacters = ContainsEscape(text.InnerText);
-                        if (isBlockQuote(block?.ParagraphProperties))
-                        {
-                            constructorBase += "\n";
-                            constructorBase += ">" + text.InnerText;
-                            constructorBase += "\n";
-                            continue;
-                        }
-                        else
-                        {
-                            if (escapeCharacters[0] is not "")
-                            {
-                                constructorBase += "" + text.InnerText.Replace(escapeCharacters[0], escapeCharacters[1]);
-                                isEsc = true;
-                            }
-                            else
-                            {
-                                constructorBase += text.InnerText;
-                            }
-                            if (text.InnerText == "/")
-                            {
-                                continue;
-                            }
-                        }
-                    }
-
-                    if (text is Break) { constructorBase += "\n"; continue; }
-                    //checkbox
-                    if (text.InnerText == "☐") { constructorBase = " [ ]"; continue; }
-                    if (text.InnerText == "☒") { constructorBase = " [X]"; continue; }
-
-
-                    /// 
-                    /// Hyperlink 
-                    /// 
-                    if (links.Count() > 0 && links.Count() > linksCount)
-                    {
-                        var LId = links.ElementAt(linksCount).Id;
-                        var result = buildHyperLink(text, LId, isEsc);
-                        //is hyperlink
-                        if (result != "")
-                        {
-                            constructorBase += result;
-                            linksCount++;
-                            break; //this break prevents  duplication of hyperlink description
-                        }
-                    }
-                    //code block
-                    if (isCodeBlock(block?.ParagraphProperties))
-                    {
-                        constructorBase = "~~~~\n" + constructorBase + "\n~~~~\n";
-                        continue;
-                    }
-
-                }
-            }
-
-            //Images
-            if (run.Descendants<Drawing>().Count() > 0)
-            {
-                string[] urlInfo = findPicUrl(run);
-                constructorBase = "![" + urlInfo[0] + "](" + urlInfo[1] + ")";
-
-                getImageRel(block, urlInfo[2]);
-
-            }
-
-            //fonts, size letter, links
-            if (run.RunProperties != null)
-            {
-                prefix = ProcessRunElements(run);
-                constructorBase = prefix + constructorBase + prefix;
-            }
-
-            //general style, lists, aligment, spacing
-            if (block.ParagraphProperties != null)
-            {
-                prefix = ProcessTextFormat(block);
-
-                if (prefix == null) prefix = "";
-
-                if (prefix.Contains("#") || prefix.Contains("-"))
-                {
-                    constructorBase = prefix + " " + constructorBase;
-                }
-
-                if (prefix.Contains(">"))
-                {
-                    constructorBase = ProcessBlockQuote(run);
-                }
-
-            }
-            //linksCount = 0;
-            textBuilder.Append(constructorBase);
-            constructorBase = "";
-        }
-        linksCount = 0;
-        constructorBase = textBuilder.ToString();
-        textBuilder.Clear();
-
-        textBuilder.Append(constructorBase);
-        //if code block
-
-        textBuilder.Append("\n");
     }
 
     private static string[] ContainsEscape(string InnerText)
@@ -421,7 +409,6 @@ public class DgDocx
             result[1] = "";
             return result;
         }
-
     }
 
     private static string buildHyperLink(OpenXmlElement text, string id = "", bool isEsc = false) //STRING LITERAL OR OPTIONAL
@@ -450,7 +437,6 @@ public class DgDocx
             }
         }
         return "";
-
     }
 
     private static bool isBlockQuote(ParagraphProperties? Properties)
@@ -495,19 +481,6 @@ public class DgDocx
         return (isLines && isShading && isIndentation);
     }
 
-
-    private static string[] findPicUrl(Run run)
-    {
-        var docPr = run.Descendants<DocProperties>().First();
-        var blip = run.Descendants<draw.Blip>().First();
-
-        string[] url = new string[3];
-            url[2] = blip.Embed.Value;
-            url[1] = docPr.Name;//url
-            url[0] = docPr.Description;//description
-        return url;
-    }
-
     private static void headerDivider(List<String> align, StringBuilder textBuilder)
     {
         textBuilder.Append("|");
@@ -533,15 +506,6 @@ public class DgDocx
             }
         }
         textBuilder.AppendLine("");
-    }
-
-    private static String getImageRel(Paragraph block, string rId){
-        Document Document = (Document)block.Parent.Parent;
-        var imagePart = Document.MainDocumentPart.GetPartById(rId);
-
-        string imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
-
-        return imageName;
     }
 }
 
