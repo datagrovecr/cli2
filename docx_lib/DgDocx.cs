@@ -201,7 +201,11 @@ public class DgDocx
 
                 constructorBase = "![" + imageName + "](" + Description + ")";
 
-                images.Add(imageName, imagePart.GetStream());
+                MemoryStream imageStream = new MemoryStream();
+
+                imagePart.GetStream().CopyTo(imageStream);
+
+                images.Add(imageName, imageStream);
             }
 
             //fonts, size letter, links
