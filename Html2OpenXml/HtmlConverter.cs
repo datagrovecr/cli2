@@ -844,7 +844,7 @@ namespace HtmlToOpenXml
                          new DW.DocProperties()
                          {
                              Id = (UInt32Value)1U,
-                             Name = "Picture 1",
+                             Name = uri.ToString(),//Here I can change the name
                              Description = alt
 
                          },
@@ -873,7 +873,6 @@ namespace HtmlToOpenXml
                                          )
                                          {
                                              Embed = relationshipId,
-                                             //ImagePartId
                                              CompressionState =
                                              A.BlipCompressionValues.Print
                                          },

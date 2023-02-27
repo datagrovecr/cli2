@@ -19,6 +19,7 @@ using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using draw = DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Vml.Office;
+using System.Drawing;
 
 public class DgDocx
 {
@@ -199,6 +200,9 @@ public class DgDocx
 
                 imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
 
+                //For a future fix
+                var ImagePartExtension = Path.GetExtension(imageName);
+
                 constructorBase = "![" + imageName + "](" + Description + ")";
 
                 MemoryStream imageStream = new MemoryStream();
@@ -206,8 +210,24 @@ public class DgDocx
                 imagePart.GetStream().CopyTo(imageStream);
 
                 images.Add(imageName, imageStream);
-            }
 
+                // using (BinaryReader reader = new BinaryReader(stream))
+                // {
+                //     // Read the binary image data into a byte array
+                //     byte[] bytes = reader.ReadBytes((int)stream.Length);
+
+                //     // Create a MemoryStream from the byte array
+                //     using (MemoryStream ms = new MemoryStream(bytes))
+                //     {
+                //         // Load the MemoryStream into an Image object
+                //         using (Image image = Image.FromStream(ms))
+                //         {
+                //             // Save the Image object as a JPEG file
+                //             image.Save("path/to/output.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                //         }
+                //     }
+                // }
+            }
             //fonts, size letter, links
             if (run.RunProperties != null)
             {
