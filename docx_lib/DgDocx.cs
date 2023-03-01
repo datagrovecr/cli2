@@ -198,19 +198,27 @@ public class DgDocx
 
                 var imagePart = mainPart.GetPartById(rId);
 
-                imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
+                imageName = Path.GetFileName(imagePart.Uri.OriginalString);
+
+                if(Path.GetExtension(imageName).Equals(".bin")){
+                    imageName = run.Descendants<DocProperties>().First().Name;
+                }
+
+                //imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
 
                 //For a future fix
                 var ImagePartExtension = Path.GetExtension(imageName);
 
-                constructorBase = "![" + imageName + "](" + Description + ")";
+                constructorBase = "![" + "../images/" + imageName + "](" + Description + ")";
 
                 MemoryStream imageStream = new MemoryStream();
 
                 imagePart.GetStream().CopyTo(imageStream);
 
-                images.Add(imageName, imageStream);
-
+                if (!images.ContainsKey(imageName)){
+                    images.Add(imageName, imageStream);
+                }
+                
                 // using (BinaryReader reader = new BinaryReader(stream))
                 // {
                 //     // Read the binary image data into a byte array

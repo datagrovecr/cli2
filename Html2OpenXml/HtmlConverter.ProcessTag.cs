@@ -487,8 +487,6 @@ namespace HtmlToOpenXml
 
                 HtmlImageInfo info = new HtmlImageInfo() { Source = src };
 
-                Console.WriteLine(src);
-
                 try
                 {
                     string image = storedImages.Where(x => x.src == "images/" + src).FirstOrDefault().hex;
