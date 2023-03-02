@@ -193,15 +193,23 @@ public class DgDocx
             if (run.Descendants<Drawing>().Count() > 0)
             {
                 string imageName;
-                string Description = run.Descendants<DocProperties>().First().Description;
+
+                //string description2 = run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties>().First()
+                string description = run.Descendants<DocProperties>().First().Description ?? "";
                 string rId = run.Descendants<draw.Blip>().First().Embed.Value;
 
                 var imagePart = mainPart.GetPartById(rId);
 
                 imageName = Path.GetFileName(imagePart.Uri.OriginalString);
 
-                if(Path.GetExtension(imageName).Equals(".bin")){
+                if (Path.GetExtension(imageName).Equals(".bin"))
+                {
                     imageName = run.Descendants<DocProperties>().First().Name;
+                }
+                if (description.Contains("/n"))
+                {
+                    string[] substrings = description.Split('\n');
+                    description = substrings[0];
                 }
 
                 //imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
@@ -209,16 +217,17 @@ public class DgDocx
                 //For a future fix
                 var ImagePartExtension = Path.GetExtension(imageName);
 
-                constructorBase = "![" + "../images/" + imageName + "](" + Description + ")";
+                constructorBase = "![" + "../images/" + imageName + "](" + description + ")";
 
                 MemoryStream imageStream = new MemoryStream();
 
                 imagePart.GetStream().CopyTo(imageStream);
 
-                if (!images.ContainsKey(imageName)){
+                if (!images.ContainsKey(imageName))
+                {
                     images.Add(imageName, imageStream);
                 }
-                
+
                 // using (BinaryReader reader = new BinaryReader(stream))
                 // {
                 //     // Read the binary image data into a byte array
