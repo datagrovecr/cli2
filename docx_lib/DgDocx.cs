@@ -194,7 +194,6 @@ public class DgDocx
             {
                 string imageName;
 
-                //string description2 = run.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties>().First()
                 string description = run.Descendants<DocProperties>().First().Description ?? "";
                 string rId = run.Descendants<draw.Blip>().First().Embed.Value;
 
@@ -212,8 +211,6 @@ public class DgDocx
                     description = substrings[0];
                 }
 
-                //imageName = imagePart.Uri.OriginalString.Replace("/word/media/", "");
-
                 //For a future fix
                 var ImagePartExtension = Path.GetExtension(imageName);
 
@@ -227,23 +224,6 @@ public class DgDocx
                 {
                     images.Add(imageName, imageStream);
                 }
-
-                // using (BinaryReader reader = new BinaryReader(stream))
-                // {
-                //     // Read the binary image data into a byte array
-                //     byte[] bytes = reader.ReadBytes((int)stream.Length);
-
-                //     // Create a MemoryStream from the byte array
-                //     using (MemoryStream ms = new MemoryStream(bytes))
-                //     {
-                //         // Load the MemoryStream into an Image object
-                //         using (Image image = Image.FromStream(ms))
-                //         {
-                //             // Save the Image object as a JPEG file
-                //             image.Save("path/to/output.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-                //         }
-                //     }
-                // }
             }
             //fonts, size letter, links
             if (run.RunProperties != null)
