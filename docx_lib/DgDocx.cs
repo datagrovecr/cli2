@@ -217,7 +217,7 @@ public class DgDocx
                 //For a future fix
                 var ImagePartExtension = Path.GetExtension(imageName);
 
-                constructorBase = "![" + "../images/" + imageName + "](" + description + ")";
+                constructorBase = "![" + description + "](" + "../images/" + imageName + ")";  
 
                 MemoryStream imageStream = new MemoryStream();
 
