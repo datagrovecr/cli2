@@ -20,6 +20,7 @@ using draw = DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Vml.Office;
 using System.Drawing;
+using System.Text.Json;
 
 public class DgDocx
 {
@@ -52,15 +53,16 @@ public class DgDocx
         }
     }
 
-    public async static Task md_to_docx(string[] mdFiles, string images, Stream[] outputStream) //String mdFile, String docxFile, String template)
+    public async static Task md_to_docx(JsonElement[] mdFiles, string images, Dictionary<string, MemoryStream> outputData) //String mdFile, String docxFile, String template)
     {
         MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
         for (int i = 0; i < mdFiles.Length; i++)
         {
-            var html = Markdown.ToHtml(mdFiles[i], pipeline);
+            MemoryStream outputStream = new MemoryStream();
+            var html = Markdown.ToHtml(mdFiles[i].GetProperty("file").GetString(), pipeline);
             //edit on debug the h
             //All the document is being saved in the stream
-            using (wordDoc = WordprocessingDocument.Create(outputStream[i] = new MemoryStream(), WordprocessingDocumentType.Document, true))
+            using (wordDoc = WordprocessingDocument.Create(outputStream = new MemoryStream(), WordprocessingDocumentType.Document, true))
             {
                 mainPart = wordDoc.AddMainDocumentPart();
 
@@ -71,6 +73,7 @@ public class DgDocx
                 converter.ParseHtml(html, images);
                 mainPart.Document.Save();
             }
+            outputData.Add(mdFiles[i].GetProperty("src").GetString(), outputStream);
         }
     }
 
