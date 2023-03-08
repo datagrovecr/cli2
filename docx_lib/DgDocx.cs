@@ -195,32 +195,25 @@ public class DgDocx
             //Images
             if (run.Descendants<Drawing>().Count() > 0)
             {
-                string imageName;
-
                 string description = run.Descendants<DocProperties>().First().Description ?? "";
                 string rId = run.Descendants<draw.Blip>().First().Embed.Value;
-
                 var imagePart = mainPart.GetPartById(rId);
-
-                imageName = Path.GetFileName(imagePart.Uri.OriginalString);
-
+                string imageName = Path.GetFileName(imagePart.Uri.OriginalString);
                 if (Path.GetExtension(imageName).Equals(".bin"))
                 {
                     imageName = run.Descendants<DocProperties>().First().Name;
                 }
+
+                //This will help me to avoid new lines in the description.
                 if (description.Contains("/n"))
                 {
                     string[] substrings = description.Split('\n');
                     description = substrings[0];
                 }
 
-                //For a future fix
-                var ImagePartExtension = Path.GetExtension(imageName);
-
                 constructorBase = "![" + description + "](" + "../images/" + imageName + ")";  
 
                 MemoryStream imageStream = new MemoryStream();
-
                 imagePart.GetStream().CopyTo(imageStream);
 
                 if (!images.ContainsKey(imageName))

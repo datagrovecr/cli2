@@ -774,9 +774,7 @@ namespace HtmlToOpenXml
 
         public static async Task InsertAPicture(string filepath, string url)
         {
-
             Stream stream = DownloadImageAsync(new Uri(url)).Result;
-
         }
 
         public static Drawing AddImageToBody(string relationshipId, Size actualSize, Size preferredSize, MainDocumentPart mainPart, string ImagePartId, string alt,Uri uri)
