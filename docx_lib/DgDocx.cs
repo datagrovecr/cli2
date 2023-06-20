@@ -21,6 +21,7 @@ using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Vml.Office;
 using System.Drawing;
 using System.Text.Json;
+using Mammoth;
 
 public class DgDocx
 {
@@ -89,6 +90,10 @@ public class DgDocx
 
         Body body = mainPart.Document.Body;
 
+        String var = body.InnerText;
+
+        Console.WriteLine(var);
+
         if (body != null)
         {
             //var asd = parts.Descendants<HyperlinkList>();
@@ -119,6 +124,21 @@ public class DgDocx
             writer.Flush();
         }
 
+    }
+
+    public async static Task docx_to_html(Stream infile, StringBuilder outfile, string name = "")
+    {
+        var converter = new DocumentConverter();
+    // .ImageConverter(image => {
+    //     using (var stream = image.GetStream()) {
+    //         var base64 = Convert.ToBase64String(stream);
+    //         var src = "data:" + image.ContentType + ";base64," + base64;
+    //         return new Dictionary<string, string> { { "src", src } };
+    //     }
+    // });
+        var result = converter.ConvertToHtml(infile);
+        outfile.Append(result.Value); // The generated HTML
+        var warnings = result.Warnings; // Any warnings during conversion
     }
 
     private static void ProcessParagraph(Paragraph block, StringBuilder textBuilder)
@@ -211,7 +231,7 @@ public class DgDocx
                     description = substrings[0];
                 }
 
-                constructorBase = "![" + description + "](" + "../images/" + imageName + ")";  
+                constructorBase = "![" + description + "](" + "../images/" + imageName + ")";
 
                 MemoryStream imageStream = new MemoryStream();
                 imagePart.GetStream().CopyTo(imageStream);

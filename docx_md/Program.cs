@@ -37,7 +37,7 @@ internal class Program
                 using (var instream = File.Open(docxFile, FileMode.Open))
                 {
                     var outstream = new MemoryStream();
-                    await DgDocx.docx_to_md(instream, outstream, root);//Previous: instream, outstream, fn.Replace("_md", "")
+                    //await DgDocx.docx_to_md(instream, outstream, root);//Previous: instream, outstream, fn.Replace("_md", "")
 
                     //The commented code is for .zip files
 

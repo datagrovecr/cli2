@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TIVO/DYOiWpVl+4XMQBP6yQFs0DIF9oCkbm5W2oZYbf0GdCcR4qFK2rtQEDz+GwgW52FH9DNYqS9cV+yrEEN8Q==",
+  "dgSpecHash": "b5wX3mAyWA/M+F8NlS7Hg3WbDALNqJwPyVGp2h2Xjvtovqag8ohve1/mELl0zkwqOSxM3ZeoyRu8ZJwMhacCsA==",
   "success": true,
   "projectFilePath": "/Users/fabianvalverde/Documents/GitHub/cli2/docx_web/docx_web.csproj",
   "expectedPackageFiles": [
@@ -28,10 +28,11 @@
     "/Users/fabianvalverde/.nuget/packages/microsoft.extensions.primitives/7.0.0/microsoft.extensions.primitives.7.0.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/microsoft.jsinterop/7.0.0/microsoft.jsinterop.7.0.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/microsoft.jsinterop.webassembly/7.0.0/microsoft.jsinterop.webassembly.7.0.0.nupkg.sha512",
+    "/Users/fabianvalverde/.nuget/packages/microsoft.net.illink.tasks/7.0.100-1.23062.2/microsoft.net.illink.tasks.7.0.100-1.23062.2.nupkg.sha512",
+    "/Users/fabianvalverde/.nuget/packages/microsoft.net.sdk.webassembly.pack/8.0.0-preview.4.23259.5/microsoft.net.sdk.webassembly.pack.8.0.0-preview.4.23259.5.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.io.pipelines/7.0.0/system.io.pipelines.7.0.0.nupkg.sha512",
     "/Users/fabianvalverde/.nuget/packages/system.text.encodings.web/7.0.0/system.text.encodings.web.7.0.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512",
-    "/Users/fabianvalverde/.nuget/packages/microsoft.netcore.app.runtime.mono.browser-wasm/7.0.3/microsoft.netcore.app.runtime.mono.browser-wasm.7.0.3.nupkg.sha512"
+    "/Users/fabianvalverde/.nuget/packages/system.text.json/7.0.0/system.text.json.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }
