@@ -49,43 +49,161 @@ All that is available following markdown best practices
 
 This section only wants to cover the basics to translate from markdown files to .docx format.
 
-To use this package just clone it in your project repository following this example in CMD:
+To use this package just clone it and reference cli2\docx_lib\docx_lib.csproj into your main project where you want to use it.
+
+## Read Markdown Files (.md to .docx)
+
+This is the method you need to get the .md file 
+DgDocx.md_to_docx(JsonElement[] mdFiles, string images, Dictionary<string, MemoryStream> outputData)
+
+mdFiles = a JsonElement that must have the space "src" (file name) and the space "file" that will store all the data you can read.
+outfile = empty new Dictionary<string, Stream>(). To store the name of the file and the file as a Stream.
+images = Must be a Json that will store the "src" (file name) and the image as a hexadecimal in a string.
+name = file's name you want to convert.
+
+Having all that data you can follow this piece of code (.net8) to zip everything.
+```
+    public static async Task<byte[]> convertToZipDocx(object[] mdObject, string images)
+    {
+        string json = JsonSerializer.Serialize(mdObject);
+        JsonElement[] mdFiles = JsonSerializer.Deserialize<JsonElement[]>(json);
+
+        try
+        {
+            Dictionary<string, MemoryStream> dictionary = new Dictionary<string, MemoryStream>();
+            
+
+            await DgDocx.md_to_docx(mdFiles, images, dictionary);
+
+            MemoryStream zipStream = new MemoryStream();
+            //The .zip file stored in the zipStream
+            using (ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+            {
+                for (int i = 0; i < dictionary.Count; i++)
+                {
+                    //The entry already created in the .zip
+                    ZipArchiveEntry entry = zipArchive.CreateEntry($"DGConvertor/Articles/{dictionary.ElementAt(i).Key.Replace("articles/", "").Replace(".md", "")}.docx");
+                    using (Stream entryStream = entry.Open())
+                    {
+                        try
+                        {
+                            dictionary.ElementAt(i).Value.Position = 0;
+                            //byte[] bytes = Encoding.ASCII.GetBytes(mdFiles[i]);
+                            await dictionary.ElementAt(i).Value.CopyToAsync(entryStream);
+                            //entryStream.Write(bytes);
+                            entryStream.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    }
+                }
+            }
+            return zipStream.ToArray();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new byte[] { };
+        }
+
+    }
+```
+## Read .docx Files (.docx to md)
+
+This is the method you need to get the .md file 
+DgDocx.docx_to_md(Stream infile, Stream outfile, Dictionary<string, Stream> images, string name = "")
+
+infile = .docx file you want to convert.
+outfile = empty new MemoryStream(). Here you'll store the .docx data.
+images = empty new Dictionary<string, Stream>(). Here you'll get the .docx images.
+name = file's name you want to convert.
+
+Having all that data you can follow this piece of code (.net8).
 
 ```
-  C:\Users\YourPc> `cd your\project\path`
-  C:\Users\YourPc\your\project\path> `git clone https://github.com/datagrovecr/cli2.git`
+public static async Task<byte[]> docxToZipMd(byte[] file, string name)
+    {
+        MemoryStream outStream = new MemoryStream();
+        
+        Dictionary<string, Stream> images = new Dictionary<string, Stream>();
+
+        using (MemoryStream data = new MemoryStream(file))
+        {
+            await DgDocx.docx_to_md(data, outStream, images);
+            @* StreamReader reader = new StreamReader(outStream);
+            md = reader.ReadToEnd(); *@
+        }
+
+        MemoryStream zipStream = new MemoryStream();
+        using (ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+        {
+            //The entry already created in the .zip
+            ZipArchiveEntry documentEntry = zipArchive.CreateEntry($"DGConvertor/Articles/{name.Replace(".docx", "")}.md");
+            using (Stream entryStream = documentEntry.Open())
+            {
+                try
+                {
+                    outStream.Position = 0;
+                    //byte[] bytes = Encoding.ASCII.GetBytes(mdFiles[i]);
+                    await outStream.CopyToAsync(entryStream);
+                    //entryStream.Write(bytes);
+                    entryStream.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            foreach (KeyValuePair<string, Stream> img in images)
+            {
+                ZipArchiveEntry imagesEntry = zipArchive.CreateEntry($"DGConvertor/Images/{img.Key}");
+                using (Stream entryStream = imagesEntry.Open())
+                {
+                    try
+                    {
+                        img.Value.Position = 0;
+                        await img.Value.CopyToAsync(entryStream);
+                         entryStream.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+        }
+        return zipStream.ToArray();
+    }
 ```
-Or do it in your favorite way following this repository link https://github.com/datagrovecr/cli2 
-Just don't forget to have it in the same project in order to reference it.
 
-## Read Markdown Files
+## Read .docx Files (.docx to .html)
 
-To translate markdown files to .docx format we need to read the whole md file using the `File` class followed by the method `ReadAllText`, it'll allow you to read the text inside a file and store it in a variable. After that we only have to instantiate a `MermoryStream` object that will help us to store the upcoming xml files and then we just need to call the method `md_to_docx` from the class `DgDocx` passing the markdown text and the Stream variable that will keep the conversion, please check the code below.
+This is the method you need to get the .md file 
+DgDocx.docx_to_html(Stream infile, StringBuilder outfile, string name = "")
 
+infile = .docx file you want to convert.
+outfile = empty new StringBuilder(). Here you'll store the .docx data.
+name = file's name you want to convert.
+
+Having all that data you can follow this piece of code (.net8).
 ```
-                   // markdown to docx
-                    var md =  File.ReadAllText(mdFile);
-                    var inputStream = new MemoryStream();
-                    await DgDocx.md_to_docx(md, inputStream);
+public static async Task<string> docxToZipHtml(byte[] file, string name)
+    {
+        StringBuilder html = new StringBuilder();
+        string htmlFinal;
+
+        using (MemoryStream data = new MemoryStream(file))
+        {
+            await DgDocx.docx_to_html(data, html, name);
+            @* StreamReader reader = new StreamReader(outStream);
+            md = reader.ReadToEnd(); *@
+            htmlFinal = html.ToString();
+        }
+        return htmlFinal;
+    }
 ```
-
-Now we have the .docx into the MemoryStream variable, it's just to write it into a document already located into a directory calling as before, the `File` class and the method `WriteAllBytes`, it'll write byte by byte the document into the .docx file we'll pass as a path. Check the code below.
-
-```
-                    File.WriteAllBytes(docxFile, inputStream.ToArray());
-```
-
-## Read .docx files
-
-To translate files from .docx format to markdown we only need to have the path of the .docx file we need to translate.
-With the `using` operator (recommended to close the stream automatically) we can open a .docx file and store it into a variable, then we have to call the `DgDocx` class and the method `docx_to_md`, passing the stream where is written the .docx file and the markdown path where we want to have the file located. Please check the code below.
-
-```
-                    using (var instream = File.Open(docxFile, FileMode.Open)){
-                        var outstream = new MemoryStream();
-                        await DgDocx.docx_to_md(instream, outstream, root)
-```
-
 # Bugs
 
 # Future Development
